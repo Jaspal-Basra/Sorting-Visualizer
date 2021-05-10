@@ -9,8 +9,6 @@
 #include <vector>
 #include <iostream>
 
-#include "Sorting.h"
-
 #define WINDOW_WIDTH    800
 #define WINDOW_HEIGHT   600
 
@@ -33,8 +31,6 @@ private:
     void initializeVariables();
     void initBars();
 
-    Sorting sorting;
-
 public:
     // Constructors / Destructors
     Bar();
@@ -47,5 +43,24 @@ public:
 
     void render(sf::RenderTarget& target);
     void renderBars(sf::RenderTarget& target);
+
+private:
+    // Variables
+
+    // Private methods
+
+    int partition(std::vector<sf::RectangleShape>& A, int start, int end);
+    void merge(std::vector<sf::RectangleShape>& A, std::vector<sf::RectangleShape>& left, std::vector<sf::RectangleShape>& right, int n, int nLeft, int nRight);
+    void swap(std::vector<sf::RectangleShape>& A, int a, int b);
+
+public:
+
+    // Public methods
+
+    void quickSort(std::vector<sf::RectangleShape>& A, int start, int end);
+    void mergeSort(std::vector<sf::RectangleShape>& A, int n);
+    void insertionSort(std::vector<sf::RectangleShape>& A, int n);
+    void bubbleSort(std::vector<sf::RectangleShape>& A, int n);
+    void selectionSort(std::vector<sf::RectangleShape>& A, int n);
 };
 
