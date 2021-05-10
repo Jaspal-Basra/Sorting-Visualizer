@@ -7,9 +7,8 @@
 #include <SFML/Network.hpp>
 
 #include <vector>
-#include <iostream>
-#include <ctime>
-#include <sstream>
+
+#include "Bar.h"
 
 /*
     Class that acts as the game engine.
@@ -27,23 +26,11 @@ private:
 
     sf::Vector2u windowBounds;
 
-    // Game objects
-    sf::RectangleShape bar;
-    std::vector<sf::RectangleShape> bars;
-
-    unsigned int numberOfBars;
-    float barSize;
-    unsigned int barCount;
-
     // Private methods
     void initializeVariables();
     void initWindow();
-    void initBars();
 
-    void insertionSort(std::vector<sf::RectangleShape>& A, int n);
-
-    void bubbleSort(std::vector<sf::RectangleShape>& A, int n);
-    void swap(std::vector<sf::RectangleShape>& A, int a, int b);
+    Bar bar;
 
 public:
     // Constructors / Destructors
@@ -60,8 +47,7 @@ public:
     void render();
     void renderBars(sf::RenderTarget& target);
 
-    void spawnBar();
-
     // Accessors
     const bool isWindowOpen() const;
+    const sf::Vector2u getWindowSize() const;
 };
