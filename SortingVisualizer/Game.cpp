@@ -22,9 +22,9 @@ void Game::initializeVariables()
 
 	// Bars
 
-	//std::cout << "Enter number of bars: ";
-	//std::cin >> numberOfBars;
-	this->numberOfBars = NUMBER_OF_BARS;
+	std::cout << "Enter number of bars: ";
+	std::cin >> numberOfBars;
+	//this->numberOfBars = NUMBER_OF_BARS;
 	this->barSize = WINDOW_WIDTH / static_cast<float>(numberOfBars); // Size of each bar = window width/# of total bars
 	this->barCount = 0;
 
@@ -219,43 +219,45 @@ void Game::merge(std::vector<sf::RectangleShape>& A, std::vector<sf::RectangleSh
 
 void Game::swap(std::vector<sf::RectangleShape>& A, int a, int b)
 {
-	A[a].setFillColor(sf::Color::Green);
-	A[b].setFillColor(sf::Color::Green);
+	//A[a].setFillColor(sf::Color::Green);
+	//A[b].setFillColor(sf::Color::Green);
 	//for (int i = 0; i < 100000; i++)
 	//{
-	if ((A[a].getPosition().x < bPos.x || A[b].getPosition().x > aPos.x))
-	{
-		A[a].move(1.f, 0.f);
-		A[b].move(-1.f, 0.f);
-	}
-	else if ((A[a].getPosition().x > bPos.x || A[b].getPosition().x < aPos.x))
-	{
-		A[a].move(-1.f, 0.f);
-		A[b].move(1.f, 0.f);
-	}
-	else
-	{
-		A[a].move(0.f, 0.f);
-		A[b].move(0.f, 0.f);
+	//if ((A[a].getPosition().x < bPos.x || A[b].getPosition().x > aPos.x))
+	//{
+		//A[a].move(1.f, 0.f);
+		//A[b].move(-1.f, 0.f);
+	//}
+	//else if ((A[a].getPosition().x > bPos.x || A[b].getPosition().x < aPos.x))
+	//{
+		//A[a].move(-1.f, 0.f);
+		//A[b].move(1.f, 0.f);
+	//}
+	//else
+	//{
+		//A[a].move(0.f, 0.f);
+		//A[b].move(0.f, 0.f);
 
-		A[a].setPosition(bPos.x, A[a].getPosition().y);
-		A[b].setPosition(aPos.x, A[b].getPosition().y);
+	A[a].setPosition(bPos.x, A[a].getPosition().y);
+	A[b].setPosition(aPos.x, A[b].getPosition().y);
 
 		temp = A[a];
 		A[a] = A[b];
 		A[b] = temp;
 
+		
+
 		//if (b == A.size()-1)
 			//A[b].setFillColor(sf::Color::Magenta);
 		//else
-			A[b].setFillColor(sf::Color::Green);
+		//A[b].setFillColor(sf::Color::Green);
 
-		A[a].setFillColor(sf::Color::Cyan);
+		//A[a].setFillColor(sf::Color::Cyan);
 	    //A[b].setFillColor(sf::Color::Cyan);
 
 		moveFinished = true;
 		//break;
-	}
+	//}
 	//}
 	
 	
@@ -358,7 +360,7 @@ void Game::bubbleSort(std::vector<sf::RectangleShape>& A, int n)
 	case BUBBLE_CHECK_CONDITION_INNER:
 		if (bubbleSortInnerIndex < n - bubbleSortOuterIndex)
 		{
-			startTime = std::chrono::high_resolution_clock::now();
+			//startTime = std::chrono::high_resolution_clock::now();
 			bubbleState = BUBBLE_CHECK_CONDITION_SWAP;
 		}
 		else
@@ -378,18 +380,19 @@ void Game::bubbleSort(std::vector<sf::RectangleShape>& A, int n)
 			aPos = A[bubbleSortInnerIndex].getPosition();
 			bPos = A[bubbleSortInnerIndex + 1].getPosition();
 			bubbleState = BUBBLE_SWAP;
-			A[bubbleSortInnerIndex].setFillColor(sf::Color::Green);
-			A[bubbleSortInnerIndex+1].setFillColor(sf::Color::Green);
+			A[bubbleSortInnerIndex].setFillColor(sf::Color::Red);
+			A[bubbleSortInnerIndex+1].setFillColor(sf::Color::Red);
 		}
 		else
 		{
 			// Check timer here to allow to stay green for some time
 			//std::chrono::steady_clock
+			A[bubbleSortInnerIndex].setFillColor(sf::Color::Green);
 			A[bubbleSortInnerIndex+1].setFillColor(sf::Color::Green);
 			currTime = std::chrono::high_resolution_clock::now();
-			if (std::chrono::duration_cast<std::chrono::microseconds>(currTime - startTime) >= waitTime)
+			//if (std::chrono::duration_cast<std::chrono::microseconds>(currTime - startTime) >= waitTime)
 			{
-				A[bubbleSortInnerIndex].setFillColor(sf::Color::Cyan);
+				//A[bubbleSortInnerIndex].setFillColor(sf::Color::Cyan);
 				bubbleState = BUBBLE_INCREMENT_INNER_INDEX;
 			}
 		}
@@ -416,6 +419,8 @@ void Game::bubbleSort(std::vector<sf::RectangleShape>& A, int n)
 	case BUBBLE_INCREMENT_INNER_INDEX:
 		//if (bubbleSortInnerIndex == n - bubbleSortOuterIndex - 1)
 			//A[bubbleSortInnerIndex+1].setFillColor(sf::Color::Magenta);
+		A[bubbleSortInnerIndex].setFillColor(sf::Color::Cyan);
+		A[bubbleSortInnerIndex+1].setFillColor(sf::Color::Green);
 		bubbleSortInnerIndex++;
 	    bubbleState = BUBBLE_CHECK_CONDITION_INNER;
 		break;
