@@ -15,9 +15,7 @@
 #define WINDOW_WIDTH    800
 #define WINDOW_HEIGHT   600
 
-#define NUMBER_OF_BARS  100
-
-#define ANIMATION_TIME  20
+#define NUMBER_OF_BARS  20
 
 enum bubbleSortState
 {
@@ -28,6 +26,18 @@ enum bubbleSortState
 	BUBBLE_INCREMENT_INNER_INDEX,
 	BUBBLE_INCREMENT_OUTER_INDEX,
 	BUBBLE_SORT_FINISHED,
+};
+
+enum selectionSortState
+{
+	SELECTION_CHECK_CONDITION_OUTER,
+	SELECTION_CHECK_CONDITION_INNER,
+    SELECTION_CHECK_CONDITION_MIN,
+	SELECTION_INCREMENT_INNER_INDEX,
+	SELECTION_CHECK_CONDITION_SWAP,
+	SELECTION_SWAP,
+	SELECTION_INCREMENT_OUTER_INDEX,
+	SELECTION_SORT_FINISHED,
 };
 
 /*
@@ -50,17 +60,26 @@ private:
     void initializeVariables();
     void initWindow();
 
-    // Sorting
-    uint8_t bubbleSortOuterIndex;
-    uint8_t bubbleSortInnerIndex;
+    // Sorting state machine variables
+    bubbleSortState bubbleState;
+    selectionSortState selectionState;
 
-	// Sorting swap
+    // Sorting swap variables
     sf::Vector2f aPos;
     sf::Vector2f bPos;
     sf::RectangleShape temp;
+
+    // Bubble sort variables
+    uint8_t bubbleSortOuterIndex;
+    uint8_t bubbleSortInnerIndex;
     bool hasSwapOccurred; // Optimizes bubble sort by exiting early 
 
-    bubbleSortState bubbleState;
+    // Selection sort variables
+    uint8_t selectionSortOuterIndex;
+    uint8_t selectionSortInnerIndex;
+    uint8_t innerIndexMin;
+
+    char c;
 
 public:
     // Constructors / Destructors
