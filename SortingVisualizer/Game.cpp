@@ -31,11 +31,7 @@ void Game::initializeVariables()
 	// Sorting
 	bubbleSortOuterIndex = 1;
 	bubbleSortInnerIndex = 0;
-
-	moveFinished = false;
 	hasSwapOccurred = false;
-
-	waitTime = static_cast<std::chrono::microseconds>(500000);
 
 	bubbleState = BUBBLE_CHECK_CONDITION_OUTER;
 
@@ -219,52 +215,12 @@ void Game::merge(std::vector<sf::RectangleShape>& A, std::vector<sf::RectangleSh
 
 void Game::swap(std::vector<sf::RectangleShape>& A, int a, int b)
 {
-	//A[a].setFillColor(sf::Color::Green);
-	//A[b].setFillColor(sf::Color::Green);
-	//for (int i = 0; i < 100000; i++)
-	//{
-	//if ((A[a].getPosition().x < bPos.x || A[b].getPosition().x > aPos.x))
-	//{
-		//A[a].move(1.f, 0.f);
-		//A[b].move(-1.f, 0.f);
-	//}
-	//else if ((A[a].getPosition().x > bPos.x || A[b].getPosition().x < aPos.x))
-	//{
-		//A[a].move(-1.f, 0.f);
-		//A[b].move(1.f, 0.f);
-	//}
-	//else
-	//{
-		//A[a].move(0.f, 0.f);
-		//A[b].move(0.f, 0.f);
-
 	A[a].setPosition(bPos.x, A[a].getPosition().y);
 	A[b].setPosition(aPos.x, A[b].getPosition().y);
 
-		temp = A[a];
-		A[a] = A[b];
-		A[b] = temp;
-
-		
-
-		//if (b == A.size()-1)
-			//A[b].setFillColor(sf::Color::Magenta);
-		//else
-		//A[b].setFillColor(sf::Color::Green);
-
-		//A[a].setFillColor(sf::Color::Cyan);
-	    //A[b].setFillColor(sf::Color::Cyan);
-
-		moveFinished = true;
-		//break;
-	//}
-	//}
-	
-	
-	// A[a].setPosition(aPos.x, A[a].getPosition().y);
-	// A[b].setPosition(bPos.x, A[b].getPosition().y);
-	// A[a] = A[b];
-	// A[b] = temp;
+	temp = A[a];
+	A[a] = A[b];
+	A[b] = temp;
 }
 
 void Game::quickSort(std::vector<sf::RectangleShape>& A, int start, int end)
@@ -360,12 +316,10 @@ void Game::bubbleSort(std::vector<sf::RectangleShape>& A, int n)
 	case BUBBLE_CHECK_CONDITION_INNER:
 		if (bubbleSortInnerIndex < n - bubbleSortOuterIndex)
 		{
-			//startTime = std::chrono::high_resolution_clock::now();
 			bubbleState = BUBBLE_CHECK_CONDITION_SWAP;
 		}
 		else
 		{
-			//if (bubbleSortInnerIndex == n - bubbleSortOuterIndex - 1)
 			A[bubbleSortInnerIndex].setFillColor(sf::Color::Magenta);
 			bubbleState = BUBBLE_INCREMENT_OUTER_INDEX;
 			bubbleSortInnerIndex = 0;
@@ -375,7 +329,6 @@ void Game::bubbleSort(std::vector<sf::RectangleShape>& A, int n)
 	case BUBBLE_CHECK_CONDITION_SWAP:
 		if (A[bubbleSortInnerIndex].getSize().y > A[bubbleSortInnerIndex + 1].getSize().y)
 		{
-			//temp = A[bubbleSortInnerIndex];
 			hasSwapOccurred = true;
 			aPos = A[bubbleSortInnerIndex].getPosition();
 			bPos = A[bubbleSortInnerIndex + 1].getPosition();
@@ -385,40 +338,19 @@ void Game::bubbleSort(std::vector<sf::RectangleShape>& A, int n)
 		}
 		else
 		{
-			// Check timer here to allow to stay green for some time
-			//std::chrono::steady_clock
 			A[bubbleSortInnerIndex].setFillColor(sf::Color::Green);
 			A[bubbleSortInnerIndex+1].setFillColor(sf::Color::Green);
-			currTime = std::chrono::high_resolution_clock::now();
-			//if (std::chrono::duration_cast<std::chrono::microseconds>(currTime - startTime) >= waitTime)
-			{
-				//A[bubbleSortInnerIndex].setFillColor(sf::Color::Cyan);
-				bubbleState = BUBBLE_INCREMENT_INNER_INDEX;
-			}
+			bubbleState = BUBBLE_INCREMENT_INNER_INDEX;
 		}
 			
 		break;
 
 	case BUBBLE_SWAP:
-		if (moveFinished)
-		{
-			//if (bubbleSortInnerIndex == n - bubbleSortOuterIndex - 1)
-				//A[bubbleSortInnerIndex+1].setFillColor(sf::Color::Magenta);
-			bubbleState = BUBBLE_INCREMENT_INNER_INDEX;
-			moveFinished = 0;
-		}
-		else
-		{
-			//A[bubbleSortInnerIndex].setFillColor(sf::Color::Green);
-			//A[bubbleSortInnerIndex+1].setFillColor(sf::Color::Green);
-			swap(A, bubbleSortInnerIndex, bubbleSortInnerIndex + 1);
-		}
-			
+		swap(A, bubbleSortInnerIndex, bubbleSortInnerIndex + 1);
+		bubbleState = BUBBLE_INCREMENT_INNER_INDEX;
 		break;
 
 	case BUBBLE_INCREMENT_INNER_INDEX:
-		//if (bubbleSortInnerIndex == n - bubbleSortOuterIndex - 1)
-			//A[bubbleSortInnerIndex+1].setFillColor(sf::Color::Magenta);
 		A[bubbleSortInnerIndex].setFillColor(sf::Color::Cyan);
 		A[bubbleSortInnerIndex+1].setFillColor(sf::Color::Green);
 		bubbleSortInnerIndex++;
@@ -426,7 +358,7 @@ void Game::bubbleSort(std::vector<sf::RectangleShape>& A, int n)
 		break;
 
 	case BUBBLE_INCREMENT_OUTER_INDEX:
-		if (!hasSwapOccurred)
+		if (!hasSwapOccurred) // Exit early if no swaps were made in last pass (optimizes the algorithm)
 			bubbleState = BUBBLE_SORT_FINISHED;
 		else
 		{
@@ -443,22 +375,5 @@ void Game::bubbleSort(std::vector<sf::RectangleShape>& A, int n)
 		}
 		A[0].setFillColor(sf::Color::Magenta);
 		break;
-	}
-}
-
-void Game::selectionSort(std::vector<sf::RectangleShape>& A, int n)
-{
-	int i_min = 0;
-
-	for (int k = 0; k < n - 1; k++)
-	{
-		i_min = k;
-		for (int i = k + 1; i < n; i++)
-		{
-			if (A[i].getSize().y < A[i_min].getSize().y)
-				i_min = i;
-		}
-		if (A[i_min].getSize().y < A[k].getSize().y)
-			swap(A, k, i_min);
 	}
 }
