@@ -30,10 +30,19 @@ void Game::initializeVariables()
 
 	// Sorting
 	bubbleSortOuterIndex = 1;
-	bubbleSortInnerIndex = 0;
-	hasSwapOccurred = false;
+	bubbleSortInnerIndex = bubbleSortOuterIndex + 1;
 
 	bubbleState = BUBBLE_CHECK_CONDITION_OUTER;
+	selectionState = SELECTION_CHECK_CONDITION_OUTER;
+
+	// Selection sort
+
+	selectionSortOuterIndex = 0;
+	selectionSortInnerIndex = 0;
+	innerIndexMin = 0;
+
+	std::cout << "Select a sorting algorithm from the following:\nSelection Sort (S)\nBubble Sort (B)\nInsertion Sort (I)\nMerge Sort (M)\nQuick Sort (Q)\nEnter here: ";
+	std::cin >> c;
 
 	// Game logic
 }
@@ -134,20 +143,20 @@ void Game::initBars()
 
 void Game::updateBars()
 {
-	//float xPos, yPos;
+	//bubbleSort(bars, bars.size());
 
-	//quickSort(bars, 0, bars.size() - 1);
-	bubbleSort(bars, bars.size());
-
-	/*
-	// Update positions of all bars after sort
-	for (int i = 0; i < bars.size(); i++)
+	switch (c)
 	{
-		xPos = barSize * static_cast<float>(i);
-		yPos = WINDOW_HEIGHT - bars[i].getSize().y;
-		this->bars[i].setPosition(xPos, yPos);
+	case 'S': selectionSort(bars, bars.size());; break;
+	case 'B': bubbleSort(bars, bars.size());; break;
+	case 'I': break;
+	case 'M': break;
+	case 'Q': break;
+	default: std::cout << "Invalid sorting algorithm selected." << std::endl; break;
 	}
-	*/
+
+	//bubbleSort(bars, bars.size());
+	//selectionSort(bars, bars.size());
 }
 
 /*
@@ -332,9 +341,9 @@ void Game::bubbleSort(std::vector<sf::RectangleShape>& A, int n)
 			hasSwapOccurred = true;
 			aPos = A[bubbleSortInnerIndex].getPosition();
 			bPos = A[bubbleSortInnerIndex + 1].getPosition();
-			bubbleState = BUBBLE_SWAP;
 			A[bubbleSortInnerIndex].setFillColor(sf::Color::Red);
 			A[bubbleSortInnerIndex+1].setFillColor(sf::Color::Red);
+			bubbleState = BUBBLE_SWAP;
 		}
 		else
 		{
@@ -377,3 +386,102 @@ void Game::bubbleSort(std::vector<sf::RectangleShape>& A, int n)
 		break;
 	}
 }
+
+void Game::selectionSort(std::vector<sf::RectangleShape>& A, int n)
+{
+	switch (selectionState)
+	{
+	case SELECTION_CHECK_CONDITION_OUTER:
+		if (selectionSortOuterIndex < n - 1)
+		{
+			innerIndexMin = selectionSortOuterIndex;
+			selectionSortInnerIndex = selectionSortOuterIndex + 1;
+			A[selectionSortOuterIndex].setFillColor(sf::Color::Red);
+			selectionState = SELECTION_CHECK_CONDITION_INNER;
+		}
+		else
+			selectionState = SELECTION_SORT_FINISHED;
+		break;
+
+	case SELECTION_CHECK_CONDITION_INNER:
+		if (selectionSortInnerIndex < n)
+		{
+			A[selectionSortInnerIndex].setFillColor(sf::Color::Green);
+			selectionState = SELECTION_CHECK_CONDITION_MIN;
+		}
+		else
+		{
+			selectionState = SELECTION_CHECK_CONDITION_SWAP;
+			selectionSortInnerIndex = 0;
+		}
+		break;
+
+	case SELECTION_CHECK_CONDITION_MIN:
+		if (A[selectionSortInnerIndex].getSize().y < A[innerIndexMin].getSize().y)
+		{
+			if (innerIndexMin != selectionSortOuterIndex)
+				A[innerIndexMin].setFillColor(sf::Color::Cyan);
+			innerIndexMin = selectionSortInnerIndex;
+			A[innerIndexMin].setFillColor(sf::Color::Red);
+		}
+		selectionState = SELECTION_INCREMENT_INNER_INDEX;
+		break;
+
+	case SELECTION_INCREMENT_INNER_INDEX:
+		if (selectionSortInnerIndex != innerIndexMin)
+			A[selectionSortInnerIndex].setFillColor(sf::Color::Cyan);
+		selectionSortInnerIndex++;
+		selectionState = SELECTION_CHECK_CONDITION_INNER;
+		break;
+
+	case SELECTION_CHECK_CONDITION_SWAP:
+		if (A[innerIndexMin].getSize().y < A[selectionSortOuterIndex].getSize().y)
+		{
+			aPos = A[selectionSortOuterIndex].getPosition();
+			bPos = A[innerIndexMin].getPosition();
+			selectionState = SELECTION_SWAP;
+		}
+		else
+		{
+			A[selectionSortOuterIndex].setFillColor(sf::Color::Magenta);
+			selectionState = SELECTION_INCREMENT_OUTER_INDEX;
+		}
+
+		break;
+
+	case SELECTION_SWAP:
+		swap(A, selectionSortOuterIndex, innerIndexMin);
+		A[selectionSortOuterIndex].setFillColor(sf::Color::Magenta);
+		A[innerIndexMin].setFillColor(sf::Color::Cyan);
+		selectionState = SELECTION_INCREMENT_OUTER_INDEX;
+		break;
+
+	case SELECTION_INCREMENT_OUTER_INDEX:
+		selectionSortOuterIndex++;
+		selectionState = SELECTION_CHECK_CONDITION_OUTER;
+		break;
+
+	case SELECTION_SORT_FINISHED:
+		A[A.size()-1].setFillColor(sf::Color::Magenta);
+		break;
+	}
+}
+
+/*
+void Game::selectionSort(std::vector<sf::RectangleShape>& A, int n)
+{
+	int i_min = 0;
+
+	for (int k = 0; k < n - 1; k++)
+	{
+		i_min = k;
+		for (int i = k + 1; i < n; i++)
+		{
+			if (A[i].getSize().y < A[i_min].getSize().y)
+				i_min = i;
+		}
+		if (A[i_min].getSize().y < A[k].getSize().y)
+			swap(A, k, i_min);
+	}
+}
+*/
