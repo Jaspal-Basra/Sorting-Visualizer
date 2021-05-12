@@ -58,13 +58,9 @@ private:
     sf::Vector2f aPos;
     sf::Vector2f bPos;
     sf::RectangleShape temp;
-    bool moveFinished;
-    bool hasSwapOccurred;
+    bool hasSwapOccurred; // Optimizes bubble sort by exiting early 
 
     bubbleSortState bubbleState;
-
-    std::chrono::steady_clock::time_point currTime, startTime;
-    std::chrono::microseconds waitTime;
 
 public:
     // Constructors / Destructors
