@@ -6,6 +6,7 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
 
+#include <iostream>
 #include <vector>
 #include <chrono>
 
@@ -14,7 +15,7 @@
 #define WINDOW_WIDTH    800
 #define WINDOW_HEIGHT   600
 
-#define NUMBER_OF_BARS  40
+#define NUMBER_OF_BARS  100
 
 #define ANIMATION_TIME  20
 
