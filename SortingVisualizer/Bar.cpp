@@ -61,7 +61,8 @@ void Bar::updateBars()
 {
 	float xPos, yPos;
 
-	quickSort(bars, 0, bars.size() - 1);
+	//quickSort(bars, 0, bars.size() - 1);
+	bubbleSort(bars, bars.size());
 
 	// Update positions of all bars after sort
 	for (int i = 0; i < bars.size(); i++)
@@ -146,6 +147,25 @@ void Bar::merge(std::vector<sf::RectangleShape>& A, std::vector<sf::RectangleSha
 void Bar::swap(std::vector<sf::RectangleShape>& A, int a, int b)
 {
 	sf::RectangleShape temp = A[a];
+	sf::Vector2f aPos = A[a].getPosition();
+	sf::Vector2f bPos = A[b].getPosition();
+
+	/*
+	while (A[a].getPosition().x != bPos.x && A[b].getPosition().x != aPos.x)
+	{
+		if (aPos.x <= bPos.x)
+		{
+			A[a].move(1.f, 0.f);
+			A[b].move(-1.f, 0.f);
+		}
+		else
+		{
+			A[a].move(-1.f, 0.f);
+			A[b].move(1.f, 0.f);
+		}
+	}
+	*/
+
 	A[a] = A[b];
 	A[b] = temp;
 }
@@ -167,9 +187,6 @@ void Bar::mergeSort(std::vector<sf::RectangleShape>& A, int n)
 	if (n < 2) return; // Base case (recursion)
 
 	int mid = n / 2;
-
-	//std::vector<sf::RectangleShape>* left = new std::vector<sf::RectangleShape>;
-	//std::vector<sf::RectangleShape>* right = new std::vector<sf::RectangleShape>;
 
 	std::vector<sf::RectangleShape> left;
 	std::vector<sf::RectangleShape> right;

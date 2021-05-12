@@ -7,8 +7,27 @@
 #include <SFML/Network.hpp>
 
 #include <vector>
+#include <chrono>
 
-#include "Bar.h"
+//#include "Bar.h"
+
+#define WINDOW_WIDTH    800
+#define WINDOW_HEIGHT   600
+
+#define NUMBER_OF_BARS  40
+
+#define ANIMATION_TIME  20
+
+enum bubbleSortState
+{
+	BUBBLE_CHECK_CONDITION_OUTER,
+	BUBBLE_CHECK_CONDITION_INNER,
+	BUBBLE_CHECK_CONDITION_SWAP,
+	BUBBLE_SWAP,
+	BUBBLE_INCREMENT_INNER_INDEX,
+	BUBBLE_INCREMENT_OUTER_INDEX,
+	BUBBLE_SORT_FINISHED,
+};
 
 /*
     Class that acts as the game engine.
@@ -30,7 +49,21 @@ private:
     void initializeVariables();
     void initWindow();
 
-    Bar bar;
+    // Sorting
+    uint8_t bubbleSortOuterIndex;
+    uint8_t bubbleSortInnerIndex;
+
+	// Sorting swap
+    sf::Vector2f aPos;
+    sf::Vector2f bPos;
+    sf::RectangleShape temp;
+    bool moveFinished;
+    bool hasSwapOccurred;
+
+    bubbleSortState bubbleState;
+
+    std::chrono::steady_clock::time_point currTime, startTime;
+    std::chrono::microseconds waitTime;
 
 public:
     // Constructors / Destructors
@@ -50,4 +83,39 @@ public:
     // Accessors
     const bool isWindowOpen() const;
     const sf::Vector2u getWindowSize() const;
+
+    // Variables
+
+// Game objects
+    sf::RectangleShape bar;
+    std::vector<sf::RectangleShape> bars;
+
+    unsigned int numberOfBars;
+    float barSize;
+    unsigned int barCount;
+
+    // Private methods
+    void initBars();
+
+public:
+    // Public Methods
+
+private:
+    // Variables
+
+    // Private methods
+
+    int partition(std::vector<sf::RectangleShape>& A, int start, int end);
+    void merge(std::vector<sf::RectangleShape>& A, std::vector<sf::RectangleShape>& left, std::vector<sf::RectangleShape>& right, int n, int nLeft, int nRight);
+    void swap(std::vector<sf::RectangleShape>& A, int a, int b);
+
+public:
+
+    // Public methods
+
+    void quickSort(std::vector<sf::RectangleShape>& A, int start, int end);
+    void mergeSort(std::vector<sf::RectangleShape>& A, int n);
+    void insertionSort(std::vector<sf::RectangleShape>& A, int n);
+    void bubbleSort(std::vector<sf::RectangleShape>& A, int n);
+    void selectionSort(std::vector<sf::RectangleShape>& A, int n);
 };
