@@ -22,27 +22,34 @@ void Game::initializeVariables()
 
 	// Bars
 
-	std::cout << "Enter number of bars: ";
-	std::cin >> numberOfBars;
-	//this->numberOfBars = NUMBER_OF_BARS;
+	//std::cout << "Enter number of bars: ";
+	//std::cin >> numberOfBars;
+	this->numberOfBars = NUMBER_OF_BARS;
 	this->barSize = WINDOW_WIDTH / static_cast<float>(numberOfBars); // Size of each bar = window width/# of total bars
 	this->barCount = 0;
 
 	// Sorting
+	bubbleState = BUBBLE_CHECK_CONDITION_OUTER;
+	selectionState = SELECTION_CHECK_CONDITION_OUTER;
+	insertionState = INSERTION_CHECK_CONDITION_OUTER;
+
+	// Bubble sort
 	bubbleSortOuterIndex = 1;
 	bubbleSortInnerIndex = bubbleSortOuterIndex + 1;
 
-	bubbleState = BUBBLE_CHECK_CONDITION_OUTER;
-	selectionState = SELECTION_CHECK_CONDITION_OUTER;
-
 	// Selection sort
-
 	selectionSortOuterIndex = 0;
 	selectionSortInnerIndex = 0;
 	innerIndexMin = 0;
 
-	std::cout << "Select a sorting algorithm from the following:\nSelection Sort (S)\nBubble Sort (B)\nInsertion Sort (I)\nMerge Sort (M)\nQuick Sort (Q)\nEnter here: ";
-	std::cin >> c;
+	// Insertion sort
+	insertionSortOuterIndex = 1;
+	insertionSortInnerIndex = 0;
+
+	//std::cout << "Select a sorting algorithm from the following:\nSelection Sort (S)\nBubble Sort (B)\nInsertion Sort (I)\nMerge Sort (M)\nQuick Sort (Q)\nEnter here: ";
+	//std::cin >> c;
+
+	c = 'I';
 
 	// Game logic
 }
@@ -147,9 +154,9 @@ void Game::updateBars()
 
 	switch (c)
 	{
-	case 'S': selectionSort(bars, bars.size());; break;
-	case 'B': bubbleSort(bars, bars.size());; break;
-	case 'I': break;
+	case 'S': selectionSort(bars, bars.size()); break;
+	case 'B': bubbleSort(bars, bars.size()); break;
+	case 'I': insertionSort(bars, bars.size()); break;
 	case 'M': break;
 	case 'Q': break;
 	default: std::cout << "Invalid sorting algorithm selected." << std::endl; break;
@@ -262,25 +269,6 @@ void Game::mergeSort(std::vector<sf::RectangleShape>& A, int n)
 	mergeSort(left, mid);
 	mergeSort(right, n - mid);
 	merge(A, left, right, n, mid, n - mid);
-}
-
-void Game::insertionSort(std::vector<sf::RectangleShape>& A, int n)
-{
-	float val;
-	int hole;
-
-	for (int i = 1; i < n; i++)
-	{
-		val = A[i].getSize().y;
-		hole = i;
-
-		while (hole > 0 && A[hole - 1].getSize().y > val)
-		{
-			A[hole] = A[hole - 1];
-			hole--;
-		}
-		A[hole].setSize(sf::Vector2f(A[hole].getSize().x, val));
-	}
 }
 
 /*
@@ -485,3 +473,82 @@ void Game::selectionSort(std::vector<sf::RectangleShape>& A, int n)
 	}
 }
 */
+
+/*
+void InsertionSort(int* A, int n)
+{
+	int val;
+	int hole;
+
+	for (int i = 1; i < n; i++)
+	{
+		val = A[i];
+		hole = i;
+
+		while (hole > 0 && A[hole-1] > val)
+		{
+			A[hole] = A[hole-1];
+			hole--;
+		}
+
+		A[hole] = val;
+	}
+}
+*/
+
+/*
+void InsertionSort(int* A, int n)
+{
+	int temp;
+	int j;
+	for (int i = 1; i < n; i++)
+	{
+		j = i;
+		while (j > 0 && A[j - 1] > A[j])
+		{
+			temp = A[j];
+			A[j] = A[j - 1];
+			A[j - 1] = temp;
+			j--;
+		}
+	}
+}
+*/
+
+void Game::insertionSort(std::vector<sf::RectangleShape>& A, int n)
+{
+	switch (insertionState)
+	{
+	case INSERTION_CHECK_CONDITION_OUTER:
+		if (insertionSortOuterIndex < n)
+		{
+			insertionSortInnerIndex = insertionSortOuterIndex;
+			A[0].setFillColor(sf::Color::Magenta);
+			A[insertionSortInnerIndex].setFillColor(sf::Color::Red);
+			insertionState = INSERTION_CHECK_CONDITION_INNER;
+		}
+		else
+			insertionState = INSERTION_SORT_FINISHED;
+		break;
+
+	case INSERTION_CHECK_CONDITION_INNER:
+		if (insertionSortInnerIndex > 0 && A[insertionSortInnerIndex-1].getSize().y > A[insertionSortInnerIndex].getSize().y)
+		{
+			aPos = A[insertionSortInnerIndex].getPosition();
+			bPos = A[insertionSortInnerIndex - 1].getPosition();
+			swap(A, insertionSortInnerIndex, insertionSortInnerIndex - 1);
+			A[insertionSortInnerIndex].setFillColor(sf::Color::Magenta);
+			insertionSortInnerIndex--;
+		}
+		else
+		{
+			A[insertionSortInnerIndex].setFillColor(sf::Color::Magenta);
+			insertionSortOuterIndex++;
+			insertionState = INSERTION_CHECK_CONDITION_OUTER;
+		}
+		break;
+
+	case INSERTION_SORT_FINISHED:
+		break;
+	}
+}
