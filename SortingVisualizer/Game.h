@@ -15,7 +15,7 @@
 #define WINDOW_WIDTH    800
 #define WINDOW_HEIGHT   600
 
-#define NUMBER_OF_BARS  20
+#define NUMBER_OF_BARS  50
 
 enum bubbleSortState
 {
@@ -38,6 +38,13 @@ enum selectionSortState
 	SELECTION_SWAP,
 	SELECTION_INCREMENT_OUTER_INDEX,
 	SELECTION_SORT_FINISHED,
+};
+
+enum insertionSortState
+{
+	INSERTION_CHECK_CONDITION_OUTER,
+	INSERTION_CHECK_CONDITION_INNER,
+	INSERTION_SORT_FINISHED,
 };
 
 /*
@@ -63,6 +70,7 @@ private:
     // Sorting state machine variables
     bubbleSortState bubbleState;
     selectionSortState selectionState;
+    insertionSortState insertionState;
 
     // Sorting swap variables
     sf::Vector2f aPos;
@@ -78,6 +86,10 @@ private:
     uint8_t selectionSortOuterIndex;
     uint8_t selectionSortInnerIndex;
     uint8_t innerIndexMin;
+
+    // Insertion sort variables
+    uint8_t insertionSortOuterIndex;
+    uint8_t insertionSortInnerIndex;
 
     char c;
 
