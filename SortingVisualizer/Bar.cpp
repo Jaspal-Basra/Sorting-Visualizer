@@ -59,18 +59,18 @@ void Bar::update()
 
 void Bar::updateBars()
 {
-	float xPos, yPos;
+	// float xPos, yPos;
 
 	//quickSort(bars, 0, bars.size() - 1);
-	bubbleSort(bars, bars.size());
+	// bubbleSort(bars, bars.size());
 
 	// Update positions of all bars after sort
-	for (int i = 0; i < bars.size(); i++)
-	{
-		xPos = barSize * static_cast<float>(i);
-		yPos = WINDOW_HEIGHT - bars[i].getSize().y;
-		this->bars[i].setPosition(xPos, yPos);
-	}
+	// for (int i = 0; i < bars.size(); i++)
+	// {
+	// 	xPos = barSize * static_cast<float>(i);
+	// 	yPos = WINDOW_HEIGHT - bars[i].getSize().y;
+	// 	this->bars[i].setPosition(xPos, yPos);
+	// }
 }
 
 /**

@@ -22,9 +22,9 @@ void Game::initializeVariables()
 
 	// Bars
 
-	//std::cout << "Enter number of bars: ";
-	//std::cin >> numberOfBars;
-	this->numberOfBars = NUMBER_OF_BARS;
+	std::cout << "Enter number of bars: ";
+	std::cin >> numberOfBars;
+	// this->numberOfBars = NUMBER_OF_BARS;
 	this->barSize = WINDOW_WIDTH / static_cast<float>(numberOfBars); // Size of each bar = window width/# of total bars
 	this->barCount = 0;
 
@@ -46,10 +46,20 @@ void Game::initializeVariables()
 	insertionSortOuterIndex = 1;
 	insertionSortInnerIndex = 0;
 
-	//std::cout << "Select a sorting algorithm from the following:\nSelection Sort (S)\nBubble Sort (B)\nInsertion Sort (I)\nMerge Sort (M)\nQuick Sort (Q)\nEnter here: ";
-	//std::cin >> c;
+	// Merge sort
+	mergeSortFinished = false;
+	renderM = false;
+	last = false;
 
-	c = 'I';
+	std::cout << "Select a sorting algorithm from the following:\nSelection Sort (S)\nBubble Sort (B)\nInsertion Sort (I)\nMerge Sort (M)\nQuick Sort (Q)\nEnter here: ";
+	std::cin >> c;
+    // c = 'M';
+
+    barIndex = 0;
+
+	index1 = 2;
+
+	cnt2 = 0;
 
 	// Game logic
 }
@@ -129,11 +139,14 @@ void Game::initBars()
 	this->bar.setOutlineColor(sf::Color::Black);
 	this->bar.setOutlineThickness(1.f);
 
+	// float barHeight = 525 + 50;
+
 	// Generate all bars
 	while (this->bars.size() < this->numberOfBars)
 	{
 		// Generate a random height for the bar
 		float barHeight = static_cast<float>(rand() % static_cast<int>((WINDOW_HEIGHT)));
+		// barHeight -= 50;
 
 		this->bar.setSize(sf::Vector2f(this->barSize, barHeight));
 
@@ -146,24 +159,37 @@ void Game::initBars()
 		this->bars.push_back(this->bar);
 		this->barCount += 1;
 	}
+
+    for (int i = 0; i < numberOfBars; i++)
+    {
+    	barPositions.push_back(bars[i].getPosition().x);
+		barHeights.push_back(bars[i].getSize().y);
+		barHeights2.push_back(bars[i].getSize().y);
+    }
 }
 
 void Game::updateBars()
 {
-	//bubbleSort(bars, bars.size());
-
 	switch (c)
 	{
 	case 'S': selectionSort(bars, bars.size()); break;
 	case 'B': bubbleSort(bars, bars.size()); break;
 	case 'I': insertionSort(bars, bars.size()); break;
-	case 'M': break;
+	case 'M': 
+		if (!mergeSortFinished) 
+			{
+				mergeSort(bars, 0, bars.size() - 1);
+				for (int i = 0; i < bars.size(); i++)
+				{
+					bars[i].setFillColor(sf::Color::Magenta);
+				}
+				mergeSortFinished = true;
+			}
+			break;
+
 	case 'Q': break;
 	default: std::cout << "Invalid sorting algorithm selected." << std::endl; break;
 	}
-
-	//bubbleSort(bars, bars.size());
-	//selectionSort(bars, bars.size());
 }
 
 /*
@@ -174,59 +200,10 @@ void Game::renderBars(sf::RenderTarget& target)
 	// Rendering all the bars
 	for (int i = 0; i < bars.size(); i++)
 	{
+		//std::cout << bars[i].getSize().y << " ";
 		target.draw(bars[i]);
 	}
-}
-
-int Game::partition(std::vector<sf::RectangleShape>& A, int start, int end)
-{
-	int pivot = A[end].getSize().y;
-	int partitionIndex = start;
-
-	for (int i = start; i < end; i++)
-	{
-		if (A[i].getSize().y <= pivot)
-		{
-			swap(A, i, partitionIndex);
-			partitionIndex++;
-		}
-	}
-	swap(A, end, partitionIndex);
-
-	return partitionIndex;
-}
-
-void Game::merge(std::vector<sf::RectangleShape>& A, std::vector<sf::RectangleShape>& left, std::vector<sf::RectangleShape>& right, int n, int nLeft, int nRight)
-{
-	int i = 0;
-	int j = 0;
-	int k = 0;
-	while (j < nLeft && k < nRight)
-	{
-		if (left[j].getSize().y <= right[k].getSize().y)
-		{
-			A[i] = left[j];
-			j++;
-		}
-		else if (right[k].getSize().y < left[j].getSize().y)
-		{
-			A[i] = right[k];
-			k++;
-		}
-		i++;
-	}
-	while (j < nLeft)
-	{
-		A[i] = left[j];
-		j++;
-		i++;
-	}
-	while (k < nRight)
-	{
-		A[i] = right[k];
-		k++;
-		i++;
-	}
+	//std::cout << std::endl;
 }
 
 void Game::swap(std::vector<sf::RectangleShape>& A, int a, int b)
@@ -238,60 +215,6 @@ void Game::swap(std::vector<sf::RectangleShape>& A, int a, int b)
 	A[a] = A[b];
 	A[b] = temp;
 }
-
-void Game::quickSort(std::vector<sf::RectangleShape>& A, int start, int end)
-{
-	int partitionIndex;
-
-	if (start < end)
-	{
-		partitionIndex = partition(A, start, end);
-		quickSort(A, start, partitionIndex - 1);
-		quickSort(A, partitionIndex + 1, end);
-	}
-}
-
-void Game::mergeSort(std::vector<sf::RectangleShape>& A, int n)
-{
-	if (n < 2) return; // Base case (recursion)
-
-	int mid = n / 2;
-
-	std::vector<sf::RectangleShape> left;
-	std::vector<sf::RectangleShape> right;
-
-	for (int i = 0; i < mid; i++)
-		left.push_back(A[i]);
-
-	for (int i = mid; i < n; i++)
-		right.push_back(A[i]);
-
-	mergeSort(left, mid);
-	mergeSort(right, n - mid);
-	merge(A, left, right, n, mid, n - mid);
-}
-
-/*
-void Game::bubbleSort(std::vector<sf::RectangleShape>& A, int n)
-{
-	int hasSwapOccurred = false;
-	for (int k = 1; k < n; k++)
-	{
-		hasSwapOccurred = false;
-		for (int i = 0; i < n - k; i++)
-		{
-			if (A[i].getSize().y > A[i + 1].getSize().y)
-			{
-				hasSwapOccurred = true;
-				swap(A, i, i + 1);
-			}
-		}
-
-		if (!hasSwapOccurred)
-			return;
-	}
-}
-*/
 
 void Game::bubbleSort(std::vector<sf::RectangleShape>& A, int n)
 {
@@ -434,7 +357,6 @@ void Game::selectionSort(std::vector<sf::RectangleShape>& A, int n)
 			A[selectionSortOuterIndex].setFillColor(sf::Color::Magenta);
 			selectionState = SELECTION_INCREMENT_OUTER_INDEX;
 		}
-
 		break;
 
 	case SELECTION_SWAP:
@@ -454,66 +376,6 @@ void Game::selectionSort(std::vector<sf::RectangleShape>& A, int n)
 		break;
 	}
 }
-
-/*
-void Game::selectionSort(std::vector<sf::RectangleShape>& A, int n)
-{
-	int i_min = 0;
-
-	for (int k = 0; k < n - 1; k++)
-	{
-		i_min = k;
-		for (int i = k + 1; i < n; i++)
-		{
-			if (A[i].getSize().y < A[i_min].getSize().y)
-				i_min = i;
-		}
-		if (A[i_min].getSize().y < A[k].getSize().y)
-			swap(A, k, i_min);
-	}
-}
-*/
-
-/*
-void InsertionSort(int* A, int n)
-{
-	int val;
-	int hole;
-
-	for (int i = 1; i < n; i++)
-	{
-		val = A[i];
-		hole = i;
-
-		while (hole > 0 && A[hole-1] > val)
-		{
-			A[hole] = A[hole-1];
-			hole--;
-		}
-
-		A[hole] = val;
-	}
-}
-*/
-
-/*
-void InsertionSort(int* A, int n)
-{
-	int temp;
-	int j;
-	for (int i = 1; i < n; i++)
-	{
-		j = i;
-		while (j > 0 && A[j - 1] > A[j])
-		{
-			temp = A[j];
-			A[j] = A[j - 1];
-			A[j - 1] = temp;
-			j--;
-		}
-	}
-}
-*/
 
 void Game::insertionSort(std::vector<sf::RectangleShape>& A, int n)
 {
@@ -551,4 +413,145 @@ void Game::insertionSort(std::vector<sf::RectangleShape>& A, int n)
 	case INSERTION_SORT_FINISHED:
 		break;
 	}
+}
+
+void Game::mergeSort(std::vector<sf::RectangleShape>& A, int start, int end)
+{
+	int n = end - start + 1;
+
+    // Poll events
+    pollEvents();
+
+	if (n < 2) return; // Base case (recursion)
+
+	int mid = n / 2 + start;
+
+	std::vector<sf::RectangleShape> left;
+	std::vector<sf::RectangleShape> right;
+
+	for (int i = start; i < mid; i++)
+		left.push_back(A[i-start]);
+
+	for (int i = mid; i < n+start; i++)
+		right.push_back(A[i-start]);
+
+	mergeSort(left, start, mid - 1);
+	mergeSort(right, mid, end);
+	merge(A, left, right, start, mid, mid, end + 1);
+
+	left.clear();
+	right.clear();
+}
+
+void Game::merge(std::vector<sf::RectangleShape>& A, std::vector<sf::RectangleShape>& left, std::vector<sf::RectangleShape>& right, int startLeft, int endLeft, int startRight, int endRight)
+{
+	int j = 0;
+	int k = 0;
+	float xPos, yPos;
+
+	int nLeft = endLeft - startLeft;
+	int nRight = endRight - startRight;
+
+	barIndex = startLeft;
+
+	for (int i = 0; i < nLeft; i++)
+	{
+		left[i].setSize(sf::Vector2f(bars[i].getSize().x, bars[i + startLeft].getSize().y));
+	}
+
+	for (int i = 0; i < nRight; i++)
+	{
+		right[i].setSize(sf::Vector2f(bars[i].getSize().x, bars[i + startRight].getSize().y));
+	}
+
+	while (j < nLeft && k < nRight)
+	{
+		bars[startLeft + j].setFillColor(sf::Color::Red);
+		bars[startRight + k].setFillColor(sf::Color::Red);
+		renderColor(*this->window, A, startLeft, endRight);
+		if (left[j].getSize().y <= right[k].getSize().y)
+		{
+			bars[startLeft + j].setFillColor(sf::Color::Cyan);
+			barHeights2[barIndex] = left[j].getSize().y;
+			j++;
+		}
+		else if (right[k].getSize().y < left[j].getSize().y)
+		{
+			bars[startRight + k].setFillColor(sf::Color::Cyan);
+			barHeights2[barIndex] = right[k].getSize().y;
+			k++;
+		}
+		barIndex++;
+	}
+	while (j < nLeft)
+	{
+		bars[startLeft + j].setFillColor(sf::Color::Cyan);
+		barHeights2[barIndex] = left[j].getSize().y;
+		j++;
+		renderColor(*this->window, A, startLeft, endRight);
+		barIndex++;
+	}
+	while (k < nRight)
+	{
+		bars[startRight + k].setFillColor(sf::Color::Cyan);
+		barHeights2[barIndex] = right[k].getSize().y;
+		k++;
+		renderColor(*this->window, A, startLeft, endRight);
+		barIndex++;
+	}
+	renderM = true;
+	renderMergeSort(*this->window, A, startLeft, endRight);
+}
+
+void Game::renderColor(sf::RenderTarget& target, std::vector<sf::RectangleShape>& A, int startLeft, int endRight)
+{
+	this->window->clear(sf::Color(0, 0, 0, 255));
+
+	// Rendering all the bars
+	for (int i = 0; i < bars.size(); i++)
+	{
+		target.draw(bars[i]);
+	}
+
+	this->window->display();
+}
+
+/*
+* Renders bars for display on window
+*/
+void Game::renderMergeSort(sf::RenderTarget& target, std::vector<sf::RectangleShape>& A, int startLeft, int endRight)
+{
+	if ((endRight - startLeft) == bars.size())
+		last = true;
+
+	for (int j = startLeft; j < endRight; j++)
+	{
+		pollEvents();
+
+		barHeights[j] = barHeights2[j];
+
+		if (last)
+		{
+			bars[j].setFillColor(sf::Color::Magenta);
+		}
+
+		for (int i = 0; i < bars.size(); i++)
+		{
+			bars[i].setSize(sf::Vector2f(bars[i].getSize().x, barHeights[i]));
+			bars[i].setPosition(bars[i].getPosition().x, WINDOW_HEIGHT-bars[i].getSize().y);
+		}
+
+		this->window->clear(sf::Color(0, 0, 0, 255));
+
+		// Rendering all the bars
+		for (int i = 0; i < bars.size(); i++)
+		{
+			target.draw(bars[i]);
+		}
+
+		this->window->display();
+	}
+
+	if (last)
+		last = false;
 }
