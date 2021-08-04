@@ -12,12 +12,11 @@ int main()
     // Game loop
     while (game.isWindowOpen())
     {
-        game.render();
         // Update
         game.update();
 
         // Render
-
+        game.render();
     }
 
     // End of application

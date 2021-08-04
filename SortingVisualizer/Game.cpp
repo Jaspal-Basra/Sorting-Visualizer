@@ -21,7 +21,6 @@ void Game::initializeVariables()
 	this->window = nullptr;
 
 	// Bars
-
 	std::cout << "Enter number of bars: ";
 	std::cin >> numberOfBars;
 	// this->numberOfBars = NUMBER_OF_BARS;
@@ -47,13 +46,14 @@ void Game::initializeVariables()
 	insertionSortInnerIndex = 0;
 
 	// Merge sort
-	mergeSortFinished = false;
 	renderM = false;
 	last = false;
 
+	// Quick sort
+
 	std::cout << "Select a sorting algorithm from the following:\nSelection Sort (S)\nBubble Sort (B)\nInsertion Sort (I)\nMerge Sort (M)\nQuick Sort (Q)\nEnter here: ";
 	std::cin >> c;
-    // c = 'M';
+    // c = 'Q';
 
     barIndex = 0;
 
@@ -139,14 +139,11 @@ void Game::initBars()
 	this->bar.setOutlineColor(sf::Color::Black);
 	this->bar.setOutlineThickness(1.f);
 
-	// float barHeight = 525 + 50;
-
 	// Generate all bars
 	while (this->bars.size() < this->numberOfBars)
 	{
 		// Generate a random height for the bar
 		float barHeight = static_cast<float>(rand() % static_cast<int>((WINDOW_HEIGHT)));
-		// barHeight -= 50;
 
 		this->bar.setSize(sf::Vector2f(this->barSize, barHeight));
 
@@ -176,18 +173,21 @@ void Game::updateBars()
 	case 'B': bubbleSort(bars, bars.size()); break;
 	case 'I': insertionSort(bars, bars.size()); break;
 	case 'M': 
-		if (!mergeSortFinished) 
-			{
-				mergeSort(bars, 0, bars.size() - 1);
-				for (int i = 0; i < bars.size(); i++)
-				{
-					bars[i].setFillColor(sf::Color::Magenta);
-				}
-				mergeSortFinished = true;
-			}
-			break;
+		if (!sortFinished) 
+		{
+			mergeSort(bars, 0, bars.size() - 1);
+			sortFinished = true;
+		}
+		break;
 
-	case 'Q': break;
+	case 'Q': 
+		if (!sortFinished)
+		{
+			quickSort(bars, 0, bars.size() - 1);
+			sortFinished = true;
+		}
+		break;
+
 	default: std::cout << "Invalid sorting algorithm selected." << std::endl; break;
 	}
 }
@@ -200,10 +200,8 @@ void Game::renderBars(sf::RenderTarget& target)
 	// Rendering all the bars
 	for (int i = 0; i < bars.size(); i++)
 	{
-		//std::cout << bars[i].getSize().y << " ";
 		target.draw(bars[i]);
 	}
-	//std::cout << std::endl;
 }
 
 void Game::swap(std::vector<sf::RectangleShape>& A, int a, int b)
@@ -468,7 +466,7 @@ void Game::merge(std::vector<sf::RectangleShape>& A, std::vector<sf::RectangleSh
 	{
 		bars[startLeft + j].setFillColor(sf::Color::Red);
 		bars[startRight + k].setFillColor(sf::Color::Red);
-		renderColor(*this->window, A, startLeft, endRight);
+		renderColor(*this->window);
 		if (left[j].getSize().y <= right[k].getSize().y)
 		{
 			bars[startLeft + j].setFillColor(sf::Color::Cyan);
@@ -488,7 +486,7 @@ void Game::merge(std::vector<sf::RectangleShape>& A, std::vector<sf::RectangleSh
 		bars[startLeft + j].setFillColor(sf::Color::Cyan);
 		barHeights2[barIndex] = left[j].getSize().y;
 		j++;
-		renderColor(*this->window, A, startLeft, endRight);
+		renderColor(*this->window);
 		barIndex++;
 	}
 	while (k < nRight)
@@ -496,14 +494,14 @@ void Game::merge(std::vector<sf::RectangleShape>& A, std::vector<sf::RectangleSh
 		bars[startRight + k].setFillColor(sf::Color::Cyan);
 		barHeights2[barIndex] = right[k].getSize().y;
 		k++;
-		renderColor(*this->window, A, startLeft, endRight);
+		renderColor(*this->window);
 		barIndex++;
 	}
 	renderM = true;
 	renderMergeSort(*this->window, A, startLeft, endRight);
 }
 
-void Game::renderColor(sf::RenderTarget& target, std::vector<sf::RectangleShape>& A, int startLeft, int endRight)
+void Game::renderColor(sf::RenderTarget& target)
 {
 	this->window->clear(sf::Color(0, 0, 0, 255));
 
@@ -516,9 +514,6 @@ void Game::renderColor(sf::RenderTarget& target, std::vector<sf::RectangleShape>
 	this->window->display();
 }
 
-/*
-* Renders bars for display on window
-*/
 void Game::renderMergeSort(sf::RenderTarget& target, std::vector<sf::RectangleShape>& A, int startLeft, int endRight)
 {
 	if ((endRight - startLeft) == bars.size())
@@ -526,32 +521,86 @@ void Game::renderMergeSort(sf::RenderTarget& target, std::vector<sf::RectangleSh
 
 	for (int j = startLeft; j < endRight; j++)
 	{
-		pollEvents();
-
 		barHeights[j] = barHeights2[j];
 
-		if (last)
-		{
-			bars[j].setFillColor(sf::Color::Magenta);
-		}
+		bars[j].setFillColor(sf::Color::Blue);
 
 		for (int i = 0; i < bars.size(); i++)
 		{
+			pollEvents();
 			bars[i].setSize(sf::Vector2f(bars[i].getSize().x, barHeights[i]));
 			bars[i].setPosition(bars[i].getPosition().x, WINDOW_HEIGHT-bars[i].getSize().y);
 		}
 
-		this->window->clear(sf::Color(0, 0, 0, 255));
+		renderColor(*this->window);
 
-		// Rendering all the bars
-		for (int i = 0; i < bars.size(); i++)
+		if (!last)
 		{
-			target.draw(bars[i]);
+			bars[j].setFillColor(sf::Color::Cyan);
 		}
-
-		this->window->display();
+		else
+		{
+			bars[j].setFillColor(sf::Color::Magenta);
+		}
 	}
 
 	if (last)
 		last = false;
+}
+
+void Game::quickSort(std::vector<sf::RectangleShape>& A, int start, int end)
+{
+	int partitionIndex;
+
+	pollEvents();
+
+	if (start < end)
+	{
+		partitionIndex = partition(A, start, end);
+		bars[partitionIndex].setFillColor(sf::Color::Magenta);
+		renderColor(*this->window);
+		quickSort(A, start, partitionIndex - 1);
+		quickSort(A, partitionIndex + 1, end);
+	}
+	else if (start == end)
+	{
+		bars[start].setFillColor(sf::Color::Magenta);
+		renderColor(*this->window);
+	}
+}
+
+int Game::partition(std::vector<sf::RectangleShape>& A, int start, int end)
+{
+	int pivot = A[end].getSize().y;
+	A[end].setFillColor(sf::Color::Blue);
+	renderColor(*this->window);
+	int partitionIndex = start;
+
+	for (int i = start; i < end; i++)
+	{
+		pollEvents();
+
+		A[i].setFillColor(sf::Color::Red);
+		A[partitionIndex].setFillColor(sf::Color::Red);
+		renderColor(*this->window);
+
+		A[i].setFillColor(sf::Color::Cyan);
+		A[partitionIndex].setFillColor(sf::Color::Cyan);
+
+		if (A[i].getSize().y <= pivot)
+		{
+			aPos = A[i].getPosition();
+			bPos = A[partitionIndex].getPosition();
+			swap(A, i, partitionIndex);
+			partitionIndex++;
+		}
+	}
+	aPos = A[end].getPosition();
+	bPos = A[partitionIndex].getPosition();
+	swap(A, end, partitionIndex);
+	A[partitionIndex].setFillColor(sf::Color::Cyan);
+
+	renderColor(*this->window);
+
+	return partitionIndex;
 }
