@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Game.h"
+#include "App.h"
 
 int main()
 {
@@ -7,16 +7,16 @@ int main()
     std::srand(static_cast<unsigned>(time(NULL)));
 
     // Init game
-    Game game;
+    App app;
 
-    // Game loop
-    while (game.isWindowOpen())
+    // Main loop
+    while (app.isWindowOpen())
     {
         // Update
-        game.update();
+        app.update();
 
         // Render
-        game.render();
+        app.render();
     }
 
     // End of application
