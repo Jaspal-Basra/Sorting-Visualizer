@@ -12,7 +12,7 @@
 #include <iostream>
 #include <vector>
 
-#define FULLSCREEN_ON   1
+#define FULLSCREEN_ON   0
 
 #if !(FULLSCREEN_ON)
  #define WINDOW_WIDTH   800
@@ -21,8 +21,30 @@
 
 #define MAX_NUMBER_OF_BARS 2000
 
+// ASCII Number Definitions
+
 #define ASCII_NUMBER_0 48
 #define ASCII_NUMBER_9 57
+
+// Order of appearance of buttons from left to right
+
+#define BUTTON_SELECTION_SORT_NUM 1
+#define BUTTON_BUBBLE_SORT_NUM 2
+#define BUTTON_INSERTION_SORT_NUM 3
+#define BUTTON_MERGE_SORT_NUM 4
+#define BUTTON_QUICK_SORT_NUM 5
+
+// Button positions as fraction of screen (0.5 means middle of screen)
+
+#define START_BUTTON_X_POS (0.5f)
+#define START_BUTTON_Y_POS (0.833f)
+
+#define RESTART_BUTTON_X_POS (0.5f)
+#define RESTART_BUTTON_Y_POS (0.5f)
+
+#define SORTING_BUTTON_X_POS (0.167f)
+#define SORTING_BUTTON_Y_POS (0.25f)
+
 
 // Non-recursive sorting algorithms are implemented using state machines to
 // prevent blocking the other tasks in the App's main loop
@@ -133,7 +155,6 @@ private:
 
     // Bar properties
     unsigned int numberOfBars;
-    float barSize;
 
     // Bar colors for different scenarios during sorting
     const sf::Color initialColor = sf::Color::Cyan;
@@ -184,8 +205,8 @@ private:
 
     // Init functions
     void initMenu();
+    bool initFont();
     void initBars();
-    void initializeVariables();
     void initWindow();
     void initText();
     void initButtons();
@@ -204,9 +225,9 @@ private:
     // Sorting functions
     void quickSort(std::vector<sf::RectangleShape>& A, int start, int end);
     void mergeSort(std::vector<sf::RectangleShape>& A, int start, int end);
-    void insertionSort(std::vector<sf::RectangleShape>& A, int n);
-    void bubbleSort(std::vector<sf::RectangleShape>& A, int n);
-    void selectionSort(std::vector<sf::RectangleShape>& A, int n);
+    bool insertionSort(std::vector<sf::RectangleShape>& A, int n);
+    bool bubbleSort(std::vector<sf::RectangleShape>& A, int n);
+    bool selectionSort(std::vector<sf::RectangleShape>& A, int n);
 
     // Sorting helper functions
     int partition(std::vector<sf::RectangleShape>& A, int start, int end);
