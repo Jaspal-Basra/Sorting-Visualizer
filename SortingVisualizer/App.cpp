@@ -3,15 +3,143 @@
 // Constructors / Destructors
 App::App()
 {
-	initializeVariables();
 	initWindow();
 
+	initMenu();
+	initializeVariables();
 	initBars();
+
+	// Load font
+	if (!font.loadFromFile("Fonts/arial_narrow_7.ttf"))
+	{
+		std::cout << "ERROR: Failed to load font!" << std::endl;
+	}
+
+	initText();
+	initButtons();
 }
 
 App::~App()
 {
+	// Delete windows
 	delete window;
+
+	// Delete textboxes
+	delete numberOfBarsTextbox;
+
+	// Delete buttons
+	delete selectionSortButton;
+	delete bubbleSortButton;
+	delete insertionSortButton;
+	delete mergeSortButton;
+	delete quickSortButton;
+	delete startButton;
+	delete restartButton;
+}
+
+/**
+* Initializes textboxes and text
+*/
+void App::initText()
+{
+	std::stringstream strBuffer;
+
+	unsigned int upperLimit = (MAX_NUMBER_OF_BARS > static_cast<unsigned int>(windowBounds.x/2)) ? static_cast<unsigned int>(windowBounds.x/2) : MAX_NUMBER_OF_BARS;
+
+	std::cout << windowBounds.x << " " << windowBounds.y << std::endl;
+
+	numberOfBarsTextbox->setFont(font);
+	numberOfBarsTextbox->setPosition({windowBounds.x/2 - numberOfBarsTextbox->getBounds().width/2, windowBounds.y/2 - numberOfBarsTextbox->getBounds().height/2});
+	numberOfBarsTextbox->setCharSize(windowBounds.x/106 + windowBounds.y/80);
+	numberOfBarsTextbox->setCharLimit(true, 5);
+
+	barsText.setFont(font);
+	barsText.setCharacterSize(windowBounds.x/106 + windowBounds.y/80);
+	barsText.setFillColor(sf::Color::White);
+	barsText.setOutlineColor(sf::Color::White);
+	
+	strBuffer << "Enter number of bars (min: 5, max: " << upperLimit << "):  ";
+	barsText.setString(strBuffer.str());
+	strBuffer.str("");
+
+	barsText.setPosition({windowBounds.x/2 - numberOfBarsTextbox->getBounds().width/2 - barsText.getLocalBounds().width, windowBounds.y/2 - numberOfBarsTextbox->getBounds().height/2});
+
+	errTextInvalidNum.setFont(font);
+	errTextInvalidNum.setCharacterSize(windowBounds.x/106 + windowBounds.y/80);
+	errTextInvalidNum.setFillColor(sf::Color::Red);
+	errTextInvalidNum.setOutlineColor(sf::Color::Red);
+	strBuffer << "Invalid number! Please enter a number between 5 and " << upperLimit; 
+	errTextInvalidNum.setString(strBuffer.str());
+	strBuffer.str("");
+
+	errTextInvalidNum.setPosition({windowBounds.x/2 - errTextInvalidNum.getLocalBounds().width/2, barsText.getPosition().y + errTextInvalidNum.getLocalBounds().height + windowBounds.y/40});
+
+	errTextSortingSelect.setFont(font);
+	errTextSortingSelect.setCharacterSize(windowBounds.x/106 + windowBounds.y/80);
+	errTextSortingSelect.setFillColor(sf::Color::Red);
+	errTextSortingSelect.setOutlineColor(sf::Color::Red);
+	errTextSortingSelect.setString("No sorting algorithm selected!");
+
+	errTextSortingSelect.setPosition({windowBounds.x/2 - errTextSortingSelect.getLocalBounds().width/2, barsText.getPosition().y + errTextInvalidNum.getLocalBounds().height + errTextSortingSelect.getLocalBounds().height + windowBounds.y/40});
+
+	title.setFont(font);
+	title.setCharacterSize(windowBounds.x/32 + windowBounds.y/24);
+	title.setFillColor(sf::Color::Blue);
+	title.setOutlineColor(sf::Color::Blue);
+	title.setString("Sorting Visualizer");
+
+	title.setPosition(sf::Vector2f(windowBounds.x/2 - title.getLocalBounds().width/2, windowBounds.y/160));
+}
+
+/**
+* Initializes buttons
+*/
+void App::initButtons()
+{
+	selectionSortButton->setFont(font);
+	selectionSortButton->setTextSize(windowBounds.x/106 + windowBounds.y/80);
+	selectionSortButton->setButtonSize(sf::Vector2f(windowBounds.x/12.8 + windowBounds.y/9.6, windowBounds.x/32 + windowBounds.y/24));
+	selectionSortButton->setPosition(sf::Vector2f(windowBounds.x/6 - selectionSortButton->getBounds().width/2, windowBounds.y/4));
+
+	bubbleSortButton->setFont(font);
+	bubbleSortButton->setTextSize(windowBounds.x/106 + windowBounds.y/80);
+	bubbleSortButton->setButtonSize(sf::Vector2f(windowBounds.x/12.8 + windowBounds.y/9.6, windowBounds.x/32 + windowBounds.y/24));
+	bubbleSortButton->setPosition(sf::Vector2f((2*windowBounds.x)/6 - selectionSortButton->getBounds().width/2, windowBounds.y/4));
+
+	insertionSortButton->setFont(font);
+	insertionSortButton->setTextSize(windowBounds.x/106 + windowBounds.y/80);
+	insertionSortButton->setButtonSize(sf::Vector2f(windowBounds.x/12.8 + windowBounds.y/9.6, windowBounds.x/32 + windowBounds.y/24));
+	insertionSortButton->setPosition(sf::Vector2f((3*windowBounds.x/6) - selectionSortButton->getBounds().width/2, windowBounds.y/4));
+
+	mergeSortButton->setFont(font);
+	mergeSortButton->setTextSize(windowBounds.x/106 + windowBounds.y/80);
+	mergeSortButton->setButtonSize(sf::Vector2f(windowBounds.x/12.8 + windowBounds.y/9.6, windowBounds.x/32 + windowBounds.y/24));
+	mergeSortButton->setPosition(sf::Vector2f((4*windowBounds.x/6) - selectionSortButton->getBounds().width/2, windowBounds.y/4));
+
+	quickSortButton->setFont(font);
+	quickSortButton->setTextSize(windowBounds.x/106 + windowBounds.y/80);
+	quickSortButton->setButtonSize(sf::Vector2f(windowBounds.x/12.8 + windowBounds.y/9.6, windowBounds.x/32 + windowBounds.y/24));
+	quickSortButton->setPosition(sf::Vector2f((5*windowBounds.x/6) - selectionSortButton->getBounds().width/2, windowBounds.y/4));
+
+	startButton->setFont(font);
+	startButton->setTextSize(windowBounds.x/106 + windowBounds.y/80);
+	startButton->setButtonSize(sf::Vector2f(windowBounds.x/12.8 + windowBounds.y/9.6, windowBounds.x/32 + windowBounds.y/24));
+	startButton->setPosition({windowBounds.x/2 - startButton->getBounds().width/2, (5*windowBounds.y)/6 - startButton->getBounds().height/2});
+
+	restartButton->setFont(font);
+	restartButton->setTextSize(windowBounds.x/106 + windowBounds.y/80);
+	restartButton->setButtonSize(sf::Vector2f(windowBounds.x/12.8 + windowBounds.y/9.6, windowBounds.x/32 + windowBounds.y/24));
+	restartButton->setPosition({windowBounds.x/2 - restartButton->getBounds().width/2, windowBounds.y/2 - restartButton->getBounds().height/2});
+}
+
+/**
+* Initializes menu
+*/
+void App::initMenu()
+{
+	// Display buttons for each sorting method
+
+	// Spawn textbox for user to enter number of bars (set an upper limit based on window size, and lower limit should be around 8)
 }
 
 /**
@@ -20,21 +148,7 @@ App::~App()
 void App::initializeVariables()
 {
 	// Bars
-	std::cout << "Enter number of bars: ";
-	std::cin >> numberOfBars;
-	barSize = WINDOW_WIDTH / static_cast<float>(numberOfBars); // Size of each bar = window width/# of total bars
-
-	// Sorting
-	std::cout << "Select a sorting algorithm from the following:\nSelection Sort (S)\nBubble Sort (B)\nInsertion Sort (I)\nMerge Sort (M)\nQuick Sort (Q)\nEnter here: ";
-	std::cin >> sortingSelect;
-
-	// Bar colors for different scenarios during sorting
-	initialColor = sf::Color::Cyan;
-    comparisonColor = sf::Color::Red;
-    scanColor = sf::Color::Green;
-    partitionIndexColor = sf::Color::Blue;
-    mergeColor = sf::Color::Blue;
-    finalColor = sf::Color::Magenta;
+	barSize = windowBounds.x / static_cast<float>(numberOfBars); // Size of each bar = window width/# of total bars
 }
 
 /**
@@ -42,10 +156,14 @@ void App::initializeVariables()
 */
 void App::initWindow()
 {
+#if !(FULLSCREEN_ON)
 	videoMode.height = WINDOW_HEIGHT;
 	videoMode.width = WINDOW_WIDTH;
 
 	window = new sf::RenderWindow(videoMode, "Sorting Visualizer", sf::Style::Titlebar | sf::Style::Close);
+#else // !(FULLSCREEN_ON)
+	window = new sf::RenderWindow(videoMode, "Sorting Visualizer", sf::Style::Titlebar | sf::Style::Close | sf::Style::Fullscreen);
+#endif // !(FULLSCREEN_ON)
 
 	windowBounds = window->getSize(); // Get window size for later use
 
@@ -59,8 +177,70 @@ void App::update()
 {
 	pollEvents();
 
-	// Update bars
-	updateBars();
+	switch (state)
+	{
+		case APP_MENU:
+			// Update menu
+			// setupSorting = true;
+			updateMenu();
+			break;
+
+		case APP_SORTING:
+			// Update bars
+			updateBars();
+			break;
+	}
+}
+
+/**
+* Update menu
+*/
+void App::updateMenu()
+{
+	// State machine for menu
+
+	// After selecting sorting algorithm, entered number of bars, and hit Start then switch control to sorting logic
+}
+
+/*
+* Renders menu for display on window
+*/
+void App::renderMenu(sf::RenderTarget& target)
+{
+	numberOfBarsTextbox->draw(*window);
+	window->draw(barsText);
+	window->draw(title);
+	selectionSortButton->draw(*window);
+	bubbleSortButton->draw(*window);
+	insertionSortButton->draw(*window);
+	mergeSortButton->draw(*window);
+	quickSortButton->draw(*window);
+	startButton->draw(*window);
+
+	// Display the relevant error text onto menu screen if necessary
+	if (displayErrTextInvalidNum && displayErrTextSortingSelect)
+	{
+		window->draw(errTextInvalidNum);
+		errTextSortingSelect.setPosition({windowBounds.x/2 - errTextSortingSelect.getLocalBounds().width/2, barsText.getPosition().y + errTextInvalidNum.getLocalBounds().height + errTextSortingSelect.getLocalBounds().height + windowBounds.y/40});
+		window->draw(errTextSortingSelect);
+	}
+	else if (displayErrTextInvalidNum)
+	{
+		window->draw(errTextInvalidNum);
+	}
+	else if (displayErrTextSortingSelect)
+	{
+		errTextSortingSelect.setPosition({windowBounds.x/2 - errTextSortingSelect.getLocalBounds().width/2, barsText.getPosition().y + errTextSortingSelect.getLocalBounds().height + windowBounds.y/40});
+		window->draw(errTextSortingSelect);
+	}
+}
+
+/*
+* Renders restart icon for display on window
+*/
+void App::renderRestartIcon(sf::RenderTarget& target)
+{
+	restartButton->draw(*window);
 }
 
 /**
@@ -71,8 +251,24 @@ void App::render()
 	// Clear old frame
 	window->clear(sf::Color(0, 0, 0, 255));
 
-	// Draw bars
-	renderBars(*window);
+	switch (state)
+	{
+		case APP_MENU:
+			// Draw menu
+			renderMenu(*window);
+			break;
+
+		case APP_RESTART_ICON:
+			// Draw bars and restart icon
+			renderBars(*window);
+			renderRestartIcon(*window);
+			break;
+
+		case APP_SORTING:
+			// Draw bars
+			renderBars(*window);
+			break;
+	}
 
 	// Update
 	window->display();
@@ -115,19 +311,284 @@ const sf::Vector2u App::getWindowSize() const
 */
 void App::pollEvents()
 {
+	static bool pressed = false;
+
 	// Event polling
 	while (window->pollEvent(event))
 	{
 		switch (event.type)
 		{
-		case sf::Event::Closed:
-			window->close();
-			break;
-		case sf::Event::KeyPressed:
-			if (event.key.code == sf::Keyboard::Escape)
+			case sf::Event::Closed:
 				window->close();
+				break;
+			case sf::Event::KeyPressed:
+				if (event.key.code == sf::Keyboard::Escape)
+					window->close();
+				break;
+
+			case sf::Event::TextEntered:
+				numberOfBarsTextbox->typedOn(event);
+				break;
+
+			case sf::Event::MouseMoved:
+				mouseMovedEvent(pressed);
+				break;
+
+			case sf::Event::MouseButtonPressed:
+				mouseButtonPressedEvent(pressed);
+				break;
 		}
 	}
+}
+
+/**
+* Sets up sorting after start button is clicked
+*
+* @return  True if sorting was started successfully, false if not
+*/
+bool App::setupSorting()
+{
+	std::string text;
+	bool invalidText = false;
+
+	std::stringstream buffer;
+	int val;
+
+	text = numberOfBarsTextbox->getText();
+
+	// Check if entry was a valid number
+	for (unsigned int i = 0; i < text.length(); i++)
+	{
+		if (text[i] < ASCII_NUMBER_0 || text[i] > ASCII_NUMBER_9)
+		{
+			displayErrTextInvalidNum = true;
+			invalidText = true;
+			break;
+		}
+	}
+
+	// Check if number is valid
+	if (!invalidText)
+	{
+		buffer << text;
+		buffer >> val;
+		if (val < 5 || val > (windowBounds.x/2) || (val > MAX_NUMBER_OF_BARS))
+		{
+			displayErrTextInvalidNum = true;
+			invalidText = true;
+		}
+		else
+		{
+			displayErrTextInvalidNum = false;
+			numberOfBars = val;
+		}
+	}
+
+	// Set all buttons back to unclicked color if invalid number was not entered
+	if (!displayErrTextInvalidNum)
+	{
+		bubbleSortButton->setButtonColor(sf::Color::Green);
+		selectionSortButton->setButtonColor(sf::Color::Green);
+		insertionSortButton->setButtonColor(sf::Color::Green);
+		mergeSortButton->setButtonColor(sf::Color::Green);
+		quickSortButton->setButtonColor(sf::Color::Green);
+	}
+
+	// Check if sorting algorithm was selected
+	if (sortingSelect == SORTING_NONE)
+	{
+		invalidText = true;
+		displayErrTextSortingSelect = true;
+	}
+	else
+	{
+		displayErrTextSortingSelect = false;
+	}
+
+	// Clear textbox if invalid number was entered or if sorting was started successfully
+	if ((displayErrTextInvalidNum && displayErrTextSortingSelect) || (!displayErrTextInvalidNum && !displayErrTextSortingSelect) || displayErrTextInvalidNum)
+	{
+		numberOfBarsTextbox->clear();
+	}
+
+	if (invalidText == true)
+		return false;
+
+	return true;
+}
+
+/**
+* Handles mouse moving events
+*/
+void App::mouseMovedEvent(bool isButtonPressed)
+{
+	switch (state)
+	{
+		case APP_MENU:
+			if (selectionSortButton->isMouseOn(*window))
+			{
+				selectionSortButton->setButtonColor(sf::Color::Red);
+			}
+			else
+			{
+				if (!isButtonPressed || sortingSelect != SORTING_SELECTION_SORT)
+					selectionSortButton->setButtonColor(sf::Color::Green);
+			}
+
+			if (bubbleSortButton->isMouseOn(*window))
+			{
+				bubbleSortButton->setButtonColor(sf::Color::Red);
+			}
+			else
+			{
+				if (!isButtonPressed || sortingSelect != SORTING_BUBBLE_SORT)
+					bubbleSortButton->setButtonColor(sf::Color::Green);
+			}
+
+			if (insertionSortButton->isMouseOn(*window))
+			{
+				insertionSortButton->setButtonColor(sf::Color::Red);
+			}
+			else
+			{
+				if (!isButtonPressed || sortingSelect != SORTING_INSERTION_SORT)
+					insertionSortButton->setButtonColor(sf::Color::Green);
+			}
+
+			if (mergeSortButton->isMouseOn(*window))
+			{
+				mergeSortButton->setButtonColor(sf::Color::Red);
+			}
+			else
+			{
+				if (!isButtonPressed || sortingSelect != SORTING_MERGE_SORT)
+					mergeSortButton->setButtonColor(sf::Color::Green);
+			}
+
+			if (quickSortButton->isMouseOn(*window))
+			{
+				quickSortButton->setButtonColor(sf::Color::Red);
+			}
+			else
+			{
+				if (!isButtonPressed || sortingSelect != SORTING_QUICK_SORT)
+					quickSortButton->setButtonColor(sf::Color::Green);
+			}
+
+			if (startButton->isMouseOn(*window))
+			{
+				startButton->setButtonColor(sf::Color::Red);
+			}
+			else
+			{
+				startButton->setButtonColor(sf::Color::Green);
+			}
+			break;
+
+		case APP_RESTART_ICON:
+			if (restartButton->isMouseOn(*window))
+			{
+				restartButton->setButtonColor(sf::Color::Red);
+			}
+			else
+			{
+				restartButton->setButtonColor(sf::Color::Green);
+			}
+			break;
+	}
+}
+
+/**
+* Handles mouse button pressint events
+*/
+void App::mouseButtonPressedEvent(bool &isButtonPressed)
+{
+	switch (state)
+	{
+		case APP_MENU:
+			if (selectionSortButton->isMouseOn(*window))
+			{
+				isButtonPressed = true;
+				selectionSortButton->setButtonColor(sf::Color::Red);
+
+				bubbleSortButton->setButtonColor(sf::Color::Green);
+				insertionSortButton->setButtonColor(sf::Color::Green);
+				mergeSortButton->setButtonColor(sf::Color::Green);
+				quickSortButton->setButtonColor(sf::Color::Green);
+
+				sortingSelect = SORTING_SELECTION_SORT;
+			}
+
+			else if (bubbleSortButton->isMouseOn(*window))
+			{
+				isButtonPressed = true;
+				bubbleSortButton->setButtonColor(sf::Color::Red);
+
+				selectionSortButton->setButtonColor(sf::Color::Green);
+				insertionSortButton->setButtonColor(sf::Color::Green);
+				mergeSortButton->setButtonColor(sf::Color::Green);
+				quickSortButton->setButtonColor(sf::Color::Green);
+
+				sortingSelect = SORTING_BUBBLE_SORT;
+			}
+
+			else if (insertionSortButton->isMouseOn(*window))
+			{
+				isButtonPressed = true;
+				insertionSortButton->setButtonColor(sf::Color::Red);
+
+				selectionSortButton->setButtonColor(sf::Color::Green);
+				bubbleSortButton->setButtonColor(sf::Color::Green);
+				mergeSortButton->setButtonColor(sf::Color::Green);
+				quickSortButton->setButtonColor(sf::Color::Green);
+
+				sortingSelect = SORTING_INSERTION_SORT;
+			}
+
+			else if (mergeSortButton->isMouseOn(*window))
+			{
+				isButtonPressed = true;
+				mergeSortButton->setButtonColor(sf::Color::Red);
+
+				selectionSortButton->setButtonColor(sf::Color::Green);
+				bubbleSortButton->setButtonColor(sf::Color::Green);
+				insertionSortButton->setButtonColor(sf::Color::Green);
+				quickSortButton->setButtonColor(sf::Color::Green);
+
+				sortingSelect = SORTING_MERGE_SORT;
+			}
+
+			else if (quickSortButton->isMouseOn(*window))
+			{
+				isButtonPressed = true;
+				quickSortButton->setButtonColor(sf::Color::Red);
+
+				selectionSortButton->setButtonColor(sf::Color::Green);
+				bubbleSortButton->setButtonColor(sf::Color::Green);
+				insertionSortButton->setButtonColor(sf::Color::Green);
+				mergeSortButton->setButtonColor(sf::Color::Green);
+
+				sortingSelect = SORTING_QUICK_SORT;
+			}
+
+			else if (startButton->isMouseOn(*window))
+			{
+				if (setupSorting())
+				{
+					state = APP_SORTING;
+				}
+			}
+			break;
+
+		case APP_RESTART_ICON:
+			if (restartButton->isMouseOn(*window))
+			{
+				state = APP_MENU;
+				restartButton->setButtonColor(sf::Color::Green);
+			}
+			break;
+	}
+	
 }
 
 /**
@@ -145,7 +606,7 @@ void App::initBars()
 	barHeights.clear();
 
 	// Initialize Bars
-	bar.setPosition(0.f, WINDOW_HEIGHT);
+	bar.setPosition(0.f, windowBounds.y);
 	bar.setSize(sf::Vector2f(2.f, 500.f));
 	bar.setFillColor(initialColor);
 	bar.setOutlineColor(sf::Color::Black);
@@ -155,14 +616,14 @@ void App::initBars()
 	while (bars.size() < numberOfBars)
 	{
 		// Generate a random height for the bar
-		barHeight = static_cast<float>(rand() % static_cast<int>((WINDOW_HEIGHT)));
+		barHeight = static_cast<float>(rand() % static_cast<int>((windowBounds.y)));
 
 		// Set bar size
 		bar.setSize(sf::Vector2f(barSize, barHeight));
 
 		// Generate bar position based on current bar count and position
 		xPos = barSize * static_cast<float>(barCount);
-		yPos = WINDOW_HEIGHT - bar.getSize().y;
+		yPos = windowBounds.y - bar.getSize().y;
 
 		// Set bar position
 		bar.setPosition(xPos, yPos);
@@ -188,33 +649,39 @@ void App::updateBars()
 	// Reset variables and bars for next run if sort has finished
 	if (sortFinished)
 	{
+		sortFinished = false;
 		initializeVariables();
 		initBars();
 		render();
-		sortFinished = false;
 	}
 
-	// Run sorting algorithm based on user selection
-	switch (sortingSelect)
+	if (!sortFinished)
 	{
-		case 'S': selectionSort(bars, bars.size()); break;
-		case 'B': bubbleSort(bars, bars.size()); break;
-		case 'I': insertionSort(bars, bars.size()); break;
-		case 'M': 
-			mergeSort(bars, 0, bars.size() - 1);
-			sortFinished = true;
-			break;
+		// Run sorting algorithm based on user selection
+		switch (sortingSelect)
+		{
+			case SORTING_SELECTION_SORT: selectionSort(bars, bars.size()); break;
+			case SORTING_BUBBLE_SORT: bubbleSort(bars, bars.size()); break;
+			case SORTING_INSERTION_SORT: insertionSort(bars, bars.size()); break;
+			case SORTING_MERGE_SORT: 
+				mergeSort(bars, 0, bars.size() - 1);
+				sortFinished = true;
+				break;
 
-		case 'Q': 
-			quickSort(bars, 0, bars.size() - 1);
-			sortFinished = true;
-			break;
+			case SORTING_QUICK_SORT: 
+				quickSort(bars, 0, bars.size() - 1);
+				sortFinished = true;
+				break;
 
-		default: 
-			std::cout << "Invalid sorting algorithm selected.\n";
-			std::cout << "Select a sorting algorithm from the following : \nSelection Sort(S)\nBubble Sort(B)\nInsertion Sort(I)\nMerge Sort(M)\nQuick Sort(Q)\nEnter here : ";
-			std::cin >> sortingSelect;
-			break;
+			default: 
+				break;
+		}
+	}
+
+	if (sortFinished)
+	{
+		state = APP_RESTART_ICON;
+		sortingSelect = SORTING_NONE;
 	}
 }
 
@@ -244,7 +711,7 @@ void App::swap(std::vector<sf::RectangleShape>& A, int a, int b)
 }
 
 /*
-* Runs bubble sort (implemented as state machine to prevent blocking App's main loop)
+* Runs bubble sort (implemented as state machine to prevent blocking other tasks in the main loop)
 *
 * @param  A Vector that contains bars
 * @param  n Number of bars in vector
@@ -340,7 +807,7 @@ void App::bubbleSort(std::vector<sf::RectangleShape>& A, int n)
 }
 
 /*
-* Runs selection sort (implemented as state machine to prevent blocking App's main loop)
+* Runs selection sort (implemented as state machine to prevent blocking other tasks in the main loop)
 *
 * @param  A Vector that contains bars
 * @param  n Number of bars in vector
@@ -434,7 +901,7 @@ void App::selectionSort(std::vector<sf::RectangleShape>& A, int n)
 }
 
 /*
-* Runs insertion sort (implemented as state machine to prevent blocking App's main loop)
+* Runs insertion sort (implemented as state machine to prevent blocking other tasks in the main loop)
 *
 * @param  A Vector that contains bars
 * @param  n Number of bars in vector
@@ -553,6 +1020,7 @@ void App::merge(std::vector<sf::RectangleShape>& A, std::vector<sf::RectangleSha
 	// Merge left and right auxiliary vectors into parent vector
 	while (j < nLeft && k < nRight)
 	{
+		pollEvents();
 		bars[startLeft + j].setFillColor(comparisonColor);
 		bars[startRight + k].setFillColor(comparisonColor);
 		render();
@@ -576,6 +1044,7 @@ void App::merge(std::vector<sf::RectangleShape>& A, std::vector<sf::RectangleSha
 	// Finish merging in case one auxiliary vector was exhausted before the other
 	while (j < nLeft)
 	{
+		pollEvents();
 		bars[startLeft + j].setFillColor(initialColor);
 		barHeights[barIndex] = left[j].getSize().y;
 		j++;
@@ -584,6 +1053,7 @@ void App::merge(std::vector<sf::RectangleShape>& A, std::vector<sf::RectangleSha
 	}
 	while (k < nRight)
 	{
+		pollEvents();
 		bars[startRight + k].setFillColor(initialColor);
 		barHeights[barIndex] = right[k].getSize().y;
 		k++;
@@ -614,7 +1084,7 @@ void App::renderMergeSort(sf::RenderTarget& target, std::vector<sf::RectangleSha
 		bars[i].setFillColor(mergeColor);
 
 		bars[i].setSize(sf::Vector2f(bars[i].getSize().x, barHeights[i]));
-		bars[i].setPosition(bars[i].getPosition().x, WINDOW_HEIGHT-bars[i].getSize().y);
+		bars[i].setPosition(bars[i].getPosition().x, windowBounds.y-bars[i].getSize().y);
 
 		render();
 
