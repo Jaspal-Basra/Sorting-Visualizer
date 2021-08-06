@@ -13,20 +13,20 @@ Button::Button(int textSize, std::string buttonText, sf::Vector2f buttonSize, sf
 }
 
 /**
-* Sets the font for the button text
-*
-* @param font  The font to set for button text
-*/
+ * Sets the font for the button text
+ *
+ * @param font  The font to set for button text
+ */
 void Button::setFont(sf::Font &font)
 {
 	text.setFont(font);
 }
 
 /**
-* Draws button on a window
-*
-* @param window  The window to draw the button onto
-*/
+ * Draws button on a window
+ *
+ * @param window  The window to draw the button onto
+ */
 void Button::draw(sf::RenderWindow &window)
 {
 	window.draw(button);
@@ -34,10 +34,12 @@ void Button::draw(sf::RenderWindow &window)
 }
 
 /**
-* Checks if mouse is on button
-*
-* @return True if mouse is on the the button, false if not
-*/
+ * Checks if mouse is on button
+ *
+ * @param  window  The window to check
+ *
+ * @return True if mouse is on the the button, false if not
+ */
 bool Button::isMouseOn(sf::RenderWindow &window)
 {
 	// Get mouse x and y position
@@ -60,8 +62,8 @@ bool Button::isMouseOn(sf::RenderWindow &window)
 }
 
 /**
-* Sets color of text on button
-*/
+ * Sets color of text on button
+ */
 void Button::setTextColor(sf::Color color)
 {
 	text.setFillColor(color);
@@ -69,10 +71,10 @@ void Button::setTextColor(sf::Color color)
 }
 
 /**
-* Gets the bounds of the button
-*
-* @return Rectangle bounds of button
-*/
+ * Gets the bounds of the button
+ *
+ * @return Rectangle bounds of button
+ */
 sf::FloatRect Button::getBounds()
 {
 	return button.getLocalBounds();
@@ -87,24 +89,24 @@ void Button::setButtonColor(sf::Color color)
 }
 
 /**
-* Sets the size of the text in the button
-*/
+ * Sets the size of the text in the button
+ */
 void Button::setTextSize(int textSize)
 {
 	text.setCharacterSize(textSize);
 }
 
 /**
-* Sets the size of the button
-*/
+ * Sets the size of the button
+ */
 void Button::setButtonSize(sf::Vector2f buttonSize)
 {
 	button.setSize(buttonSize);
 }
 
 /**
-* Sets the psoition of the button
-*/
+ * Sets the psoition of the button
+ */
 void Button::setPosition(sf::Vector2f pos)
 {
 	button.setPosition(pos);

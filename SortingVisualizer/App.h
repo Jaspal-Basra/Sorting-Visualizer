@@ -21,11 +21,36 @@
 
 #define MAX_NUMBER_OF_BARS 2000
 
+// ASCII Number Definitions
+
 #define ASCII_NUMBER_0 48
 #define ASCII_NUMBER_9 57
 
-// Non-recursive sorting algorithms are implemented using state machines to
-// prevent blocking the other tasks in the App's main loop
+// Order of appearance of buttons from left to right on window
+
+#define BUTTON_SELECTION_SORT_NUM 1
+#define BUTTON_BUBBLE_SORT_NUM 2
+#define BUTTON_INSERTION_SORT_NUM 3
+#define BUTTON_MERGE_SORT_NUM 4
+#define BUTTON_QUICK_SORT_NUM 5
+
+// Button positions as fraction of screen (0.5 means middle of screen)
+
+#define START_BUTTON_X_POS (0.5f)
+#define START_BUTTON_Y_POS (0.833f)
+
+#define RESTART_BUTTON_X_POS (0.5f)
+#define RESTART_BUTTON_Y_POS (0.5f)
+
+#define SORTING_BUTTON_X_POS (0.167f)
+#define SORTING_BUTTON_Y_POS (0.25f)
+
+// Framerate Limit Definitions
+
+#define FRAMERATE_LIMIT_MAX 100
+#define FRAMERATE_LIMIT_MIN 10
+#define FRAMERATE_LIMIT_NORMAL 60
+#define FRAMERATE_LIMIT_BAR_DIVISOR 2
 
 /**
 * States for bubble sort state machine
@@ -94,8 +119,7 @@ enum sortingAlgorithms
 };
 
 /*
-    Class that acts as the app engine.
-    Wrapper class.
+    App class
 */
 class App
 {
@@ -114,6 +138,50 @@ public:
 
 private:
 
+    // Private methods
+
+    // Init functions
+    void initMenu();
+    bool initFont();
+    void initBars();
+    void initWindow();
+    void initText();
+    void initButtons();
+
+    void pollEvents();
+
+    // Update functions
+    void updateBars();
+
+    // Render functions
+    void renderBars(sf::RenderTarget& target);
+    void renderMenu(sf::RenderTarget& target);
+    void renderRestartButton(sf::RenderTarget& target);
+
+    // Sorting functions
+    void quickSort(std::vector<sf::RectangleShape>& A, int start, int end);
+    void mergeSort(std::vector<sf::RectangleShape>& A, int start, int end);
+    bool insertionSort(std::vector<sf::RectangleShape>& A, int n);
+    bool bubbleSort(std::vector<sf::RectangleShape>& A, int n);
+    bool selectionSort(std::vector<sf::RectangleShape>& A, int n);
+
+    // Sorting helper functions
+    int partition(std::vector<sf::RectangleShape>& A, int start, int end);
+    void merge(std::vector<sf::RectangleShape>& A, std::vector<sf::RectangleShape>& left, std::vector<sf::RectangleShape>& right, int startLeft, int endLeft, int startRight, int endRight);
+    void swap(std::vector<sf::RectangleShape>& A, int a, int b);
+
+    // Rendering functions (for recursive sorting algorithms)
+    void renderMergeSort(sf::RenderTarget& target, std::vector<sf::RectangleShape>& A, int startLeft, int endRight);
+
+    // Mouse event functions
+    void mouseMovedEvent(bool isButtonPressed);
+    void mouseButtonPressedEvent(bool &isButtonPressed);
+
+    // Setup before sorting begins
+    bool setupSorting();
+
+private:
+
     // Private variables
 
     // Window
@@ -121,9 +189,6 @@ private:
     sf::VideoMode videoMode;
     sf::Event event;
     sf::Vector2u windowBounds;
-
-    // Sorting select variable
-    // char sortingSelect;
 
     // Bar object
     sf::RectangleShape bar;
@@ -133,7 +198,6 @@ private:
 
     // Bar properties
     unsigned int numberOfBars;
-    float barSize;
 
     // Bar colors for different scenarios during sorting
     const sf::Color initialColor = sf::Color::Cyan;
@@ -142,6 +206,11 @@ private:
     const sf::Color partitionIndexColor = sf::Color::Blue;
     const sf::Color mergeColor = sf::Color::Blue;
     const sf::Color finalColor = sf::Color::Magenta;
+
+    // Button colors for different scenarious in menu
+    const sf::Color unclickedColor = sf::Color::Green;
+    const sf::Color clickedColor = sf::Color::Red;
+    const sf::Color hoverColor = sf::Color::Red;
 
     // Bar height vector
 	std::vector<float> barHeights;
@@ -164,8 +233,10 @@ private:
     Button* startButton = new Button(15, "START", {125, 50}, sf::Color::Green, sf::Color::Black);
     Button* restartButton = new Button(15, "RESTART", {125, 50}, sf::Color::Green, sf::Color::Black);
 
+    // App state
     appState state = APP_MENU;
 
+    // Sorting select
     sortingAlgorithms sortingSelect = SORTING_NONE;
 
     // Menu texts
@@ -174,52 +245,7 @@ private:
     sf::Text errTextSortingSelect;
     sf::Text title;
 
-    // Flags to indicate which error text should be displayed
+    // Flags to indicate which error text should be displayed on menu
     bool displayErrTextInvalidNum = false;
     bool displayErrTextSortingSelect = false;
-
-private:
-
-    // Private methods
-
-    // Init functions
-    void initMenu();
-    void initBars();
-    void initializeVariables();
-    void initWindow();
-    void initText();
-    void initButtons();
-
-    void pollEvents();
-
-    // Update functions
-    void updateBars();
-    void updateMenu();
-
-    // Render functions
-    void renderBars(sf::RenderTarget& target);
-    void renderMenu(sf::RenderTarget& target);
-    void renderRestartIcon(sf::RenderTarget& target);
-
-    // Sorting functions
-    void quickSort(std::vector<sf::RectangleShape>& A, int start, int end);
-    void mergeSort(std::vector<sf::RectangleShape>& A, int start, int end);
-    void insertionSort(std::vector<sf::RectangleShape>& A, int n);
-    void bubbleSort(std::vector<sf::RectangleShape>& A, int n);
-    void selectionSort(std::vector<sf::RectangleShape>& A, int n);
-
-    // Sorting helper functions
-    int partition(std::vector<sf::RectangleShape>& A, int start, int end);
-    void merge(std::vector<sf::RectangleShape>& A, std::vector<sf::RectangleShape>& left, std::vector<sf::RectangleShape>& right, int startLeft, int endLeft, int startRight, int endRight);
-    void swap(std::vector<sf::RectangleShape>& A, int a, int b);
-
-    // Rendering functions (for recursive sorting algorithms that block the main loop)
-    void renderMergeSort(sf::RenderTarget& target, std::vector<sf::RectangleShape>& A, int startLeft, int endRight);
-
-    // Mouse event functions
-    void mouseMovedEvent(bool isButtonPressed);
-    void mouseButtonPressedEvent(bool &isButtonPressed);
-
-    // Setup before sorting begins
-    bool setupSorting();
 };

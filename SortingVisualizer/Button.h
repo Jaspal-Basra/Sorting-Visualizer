@@ -6,6 +6,7 @@
 class Button
 {
 public:
+	// Constructors / Destructors
 	Button() { }
 	Button(int textSize, std::string buttonText, sf::Vector2f buttonSize, sf::Color buttonColor, sf::Color textColor);
 

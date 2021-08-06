@@ -21,16 +21,16 @@ Textbox::~Textbox()
 }
 
 /**
-* Sets character size of the text box
-*/
+ * Sets character size of the text box
+ */
 void Textbox::setCharSize(int charSize)
 {
 	textArea.setCharacterSize(charSize);
 }
 
 /**
-* Adds an inputted character to the textbox
-*/
+ * Adds an inputted character to the textbox
+ */
 void Textbox::inputText(int inputChar)
 {
 	// Remove last character if backspace was entered
@@ -41,7 +41,7 @@ void Textbox::inputText(int inputChar)
 			eraseLastChar();
 		}
 	}
-	else
+	else if (inputChar != ENTER_KEY)
 	{
 		textBuf << static_cast<char>(inputChar);
 	}
@@ -57,10 +57,10 @@ void Textbox::inputText(int inputChar)
 }
 
 /**
-* Gets the bounds of the textbox
-*
-* @return Rectangle bounds of textbox
-*/
+ * Gets the bounds of the textbox
+ *
+ * @return Rectangle bounds of textbox
+ */
 sf::FloatRect Textbox::getBounds()
 {
 	return textArea.getLocalBounds();
@@ -71,7 +71,7 @@ sf::FloatRect Textbox::getBounds()
 */
 void Textbox::eraseLastChar()
 {
-	// Create new substring does not include last character
+	// Create new substring does not include the last character
 	std::string newTextBuf = textBuf.str().substr(0, textBuf.str().length() - 1);
 
 	// Clear text buffer
@@ -85,11 +85,11 @@ void Textbox::eraseLastChar()
 }
 
 /**
-* Sets character limit for textbox
-*
-* @param hasLim  True if textbox will have a limit, false if not 
-* @param lim     Character limit for textbox (not used if hasLim is false)
-*/
+ * Sets character limit for textbox
+ *
+ * @param hasLim  True if textbox will have a limit, false if not 
+ * @param lim     Character limit for textbox (not used if hasLim is false)
+ */
 void Textbox::setCharLimit(bool hasLim, int lim)
 {
 	hasCharLim = hasLim;
@@ -101,8 +101,8 @@ void Textbox::setCharLimit(bool hasLim, int lim)
 }
 
 /**
-* Sets if textbox appears as selected (underscore to indicate ready for user input)
-*/
+ * Sets if textbox appears as selected (underscore to indicate ready for user input)
+ */
 void Textbox::setSelected(bool sel)
 {
 	isSelected = sel;
@@ -123,10 +123,10 @@ void Textbox::setSelected(bool sel)
 }
 
 /**
-* Sets if textbox appears as selected (underscore to indicate ready for user input)
-*
-* @return The text in the textbox
-*/
+ * Gets the text in the textbox
+ *
+ * @return The text in the textbox
+ */
 std::string Textbox::getText()
 {
 	return textBuf.str();
@@ -143,19 +143,19 @@ void Textbox::draw(sf::RenderWindow &window)
 }
 
 /**
-* Draws textbox onto the window
-*
-* @param pos  The positions to set textbox to
-*/
+ * Sets the position of the textbox
+ *
+ * @param pos  The position to set the textbox to
+ */
 void Textbox::setPosition(sf::Vector2f pos)
 {
 	textArea.setPosition(pos);
 }
 
 /**
-* Draws textbox onto the window
+* Sets the font of the text in the textbox
 *
-* @param pos  The position to set textbox to
+* @param font  The font to set text in the textbox to
 */
 void Textbox::setFont(sf::Font &font)
 {
@@ -163,14 +163,15 @@ void Textbox::setFont(sf::Font &font)
 }
 
 /**
-* Logic that decides whether a character is inputted to textbox
-*
-* @param input  Inputted key event
-*/
-void Textbox::typedOn(sf::Event input)
+ * Logic that decides whether a character is inputted to the textbox
+ *
+ * @param input  Inputted key event
+ */
+void Textbox::processTyping(sf::Event input)
 {
 	if (isSelected)
 	{
+		// Get the character code
 		int inputChar = input.text.unicode;
 		if (inputChar <= MAX_ASCII_VALUE)
 		{
@@ -190,8 +191,8 @@ void Textbox::typedOn(sf::Event input)
 }
 
 /**
-* Clears the textbox of all text
-*/
+ * Clears the textbox of all text
+ */ 
 void Textbox::clear()
 {
 	textBuf.str("");

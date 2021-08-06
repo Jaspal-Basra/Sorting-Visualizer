@@ -5,6 +5,7 @@
 #include <sstream>
 
 #define BACKSPACE_KEY 8
+#define ENTER_KEY 13
 
 #define MAX_ASCII_VALUE 127
 
@@ -24,7 +25,7 @@ public:
     void setCharLimit(bool hasLim, int lim = 0);
     void setSelected(bool sel);
     void setCharSize(int charSize);
-    void typedOn(sf::Event input);
+    void processTyping(sf::Event input);
     void clear();
     sf::FloatRect getBounds();
     
