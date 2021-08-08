@@ -43,8 +43,8 @@ void Button::draw(sf::RenderWindow &window)
 bool Button::isMouseOn(sf::RenderWindow &window)
 {
 	// Get mouse x and y position
-	float xPosMouse = sf::Mouse::getPosition(window).x;
-	float yPosMouse = sf::Mouse::getPosition(window).y;
+	int xPosMouse = sf::Mouse::getPosition(window).x;
+	int yPosMouse = sf::Mouse::getPosition(window).y;
 
 	// Get button x and y position
 	float xPosButton = button.getPosition().x;

@@ -1,10 +1,6 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
-#include <SFML/Window.hpp>
-#include <SFML/Audio.hpp>
-#include <SFML/Network.hpp>
 
 #include "Textbox.h"
 #include "Button.h"
@@ -160,18 +156,18 @@ private:
 
     // Sorting functions
     void quickSort(std::vector<sf::RectangleShape>& A, int start, int end);
-    void mergeSort(std::vector<sf::RectangleShape>& A, int start, int end);
-    bool insertionSort(std::vector<sf::RectangleShape>& A, int n);
-    bool bubbleSort(std::vector<sf::RectangleShape>& A, int n);
-    bool selectionSort(std::vector<sf::RectangleShape>& A, int n);
+    void mergeSort(std::vector<sf::RectangleShape>& A, unsigned int start, unsigned int end);
+    bool insertionSort(std::vector<sf::RectangleShape>& A, unsigned int n);
+    bool bubbleSort(std::vector<sf::RectangleShape>& A, unsigned int n);
+    bool selectionSort(std::vector<sf::RectangleShape>& A, unsigned int n);
 
     // Sorting helper functions
-    int partition(std::vector<sf::RectangleShape>& A, int start, int end);
-    void merge(std::vector<sf::RectangleShape>& A, std::vector<sf::RectangleShape>& left, std::vector<sf::RectangleShape>& right, int startLeft, int endLeft, int startRight, int endRight);
-    void swap(std::vector<sf::RectangleShape>& A, int a, int b);
+    int partition(std::vector<sf::RectangleShape>& A, unsigned int start, unsigned int end);
+    void merge(std::vector<sf::RectangleShape>& A, std::vector<sf::RectangleShape>& left, std::vector<sf::RectangleShape>& right, unsigned int startLeft, unsigned int endLeft, unsigned int startRight, unsigned int endRight);
+    void swap(std::vector<sf::RectangleShape>& A, unsigned int a, unsigned int b);
 
     // Rendering functions (for recursive sorting algorithms)
-    void renderMergeSort(sf::RenderTarget& target, std::vector<sf::RectangleShape>& A, int startLeft, int endRight);
+    void renderMergeSort(sf::RenderTarget& target, std::vector<sf::RectangleShape>& A, unsigned int startLeft, unsigned int endRight);
 
     // Mouse event functions
     void mouseMovedEvent(bool isButtonPressed);

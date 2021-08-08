@@ -90,7 +90,7 @@ void Textbox::eraseLastChar()
  * @param hasLim  True if textbox will have a limit, false if not 
  * @param lim     Character limit for textbox (not used if hasLim is false)
  */
-void Textbox::setCharLimit(bool hasLim, int lim)
+void Textbox::setCharLimit(bool hasLim, unsigned int lim)
 {
 	hasCharLim = hasLim;
 

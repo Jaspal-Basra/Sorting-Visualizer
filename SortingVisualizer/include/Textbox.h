@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+
 #include <iostream>
 #include <sstream>
 
@@ -22,7 +23,7 @@ public:
     void draw(sf::RenderWindow &window);
     void setPosition(sf::Vector2f pos);
     void setFont(sf::Font &font);
-    void setCharLimit(bool hasLim, int lim = 0);
+    void setCharLimit(bool hasLim, unsigned int lim = 0);
     void setSelected(bool sel);
     void setCharSize(int charSize);
     void processTyping(sf::Event input);
@@ -32,7 +33,7 @@ public:
 private:
 	sf::Text textArea;
 	std::ostringstream textBuf;
-	int charLim;
+	unsigned int charLim;
 	bool hasCharLim = false;
 	bool isSelected = false;
 

@@ -128,7 +128,7 @@ bool App::initFont()
  */
 void App::initButtons()
 {
-	const sf::Vector2f buttonSize = sf::Vector2f(windowBounds.x/12.8 + windowBounds.y/9.6, windowBounds.x/32 + windowBounds.y/24);
+	const sf::Vector2f buttonSize = sf::Vector2f(windowBounds.x/12.8f + windowBounds.y/9.6f, windowBounds.x/32.f + windowBounds.y/24.f);
 	const int textSize = windowBounds.x/106 + windowBounds.y/80;
 
 	selectionSortButton->setFont(font);
@@ -217,7 +217,7 @@ void App::initText()
 	title.setOutlineColor(sf::Color::Blue);
 	title.setString("Sorting Visualizer");
 
-	title.setPosition(sf::Vector2f(windowBounds.x/2 - title.getLocalBounds().width/2, windowBounds.y/160));
+	title.setPosition(sf::Vector2f(windowBounds.x/2.f - title.getLocalBounds().width/2.f, windowBounds.y/160.f));
 }
 
 /**
@@ -337,7 +337,7 @@ bool App::setupSorting()
 	bool invalidText = false;
 
 	std::stringstream buffer;
-	int val;
+	unsigned int val;
 
 	text = numberOfBarsTextbox->getText();
 
@@ -612,7 +612,7 @@ void App::initBars()
 	barHeights.clear();
 
 	// Initialize Bars
-	bar.setPosition(0.f, windowBounds.y);
+	bar.setPosition(0.f, static_cast<float>(windowBounds.y));
 	bar.setSize(sf::Vector2f(2.f, 500.f));
 	bar.setFillColor(initialColor);
 	bar.setOutlineColor(sf::Color::Black);
@@ -715,7 +715,7 @@ void App::updateBars()
  * @param  a First bar to swap
  * @param  b Second bar to swap
  */
-void App::swap(std::vector<sf::RectangleShape>& A, int a, int b)
+void App::swap(std::vector<sf::RectangleShape>& A, unsigned int a, unsigned int b)
 {
 	sf::RectangleShape temp;
 
@@ -741,7 +741,7 @@ void App::swap(std::vector<sf::RectangleShape>& A, int a, int b)
  *
  * @return   True if sort is finished, false if not
  */
-bool App::bubbleSort(std::vector<sf::RectangleShape>& A, int n)
+bool App::bubbleSort(std::vector<sf::RectangleShape>& A, unsigned int n)
 {
 	bool retVal = false;
 	static bubbleSortState bubbleState = BUBBLE_CHECK_CONDITION_OUTER; 
@@ -752,7 +752,7 @@ bool App::bubbleSort(std::vector<sf::RectangleShape>& A, int n)
 	switch (bubbleState)
 	{
 		case BUBBLE_CHECK_CONDITION_OUTER:
-			if (bubbleSortOuterIndex < n - 1)
+			if (bubbleSortOuterIndex < n)
 			{
 				hasSwapOccurred = false;
 				bubbleState = BUBBLE_CHECK_CONDITION_INNER;
@@ -841,7 +841,7 @@ bool App::bubbleSort(std::vector<sf::RectangleShape>& A, int n)
  *
  * @return   True if sort is finished, false if not
  */
-bool App::selectionSort(std::vector<sf::RectangleShape>& A, int n)
+bool App::selectionSort(std::vector<sf::RectangleShape>& A, unsigned int n)
 {
 	bool retVal = false;
 	static selectionSortState selectionState = SELECTION_CHECK_CONDITION_OUTER;
@@ -939,7 +939,7 @@ bool App::selectionSort(std::vector<sf::RectangleShape>& A, int n)
  *
  * @return   True if sort is finished, false if not
  */
-bool App::insertionSort(std::vector<sf::RectangleShape>& A, int n)
+bool App::insertionSort(std::vector<sf::RectangleShape>& A, unsigned int n)
 {
 	bool retVal = false;
 
@@ -994,7 +994,7 @@ bool App::insertionSort(std::vector<sf::RectangleShape>& A, int n)
  * @param start  First index in vector
  * @param end    Final index in vector
  */
-void App::mergeSort(std::vector<sf::RectangleShape>& A, int start, int end)
+void App::mergeSort(std::vector<sf::RectangleShape>& A, unsigned int start, unsigned int end)
 {
 	int n = end - start + 1;
 
@@ -1003,15 +1003,15 @@ void App::mergeSort(std::vector<sf::RectangleShape>& A, int start, int end)
 
 	if (n < 2) return; // Base case (recursion)
 
-	int mid = n / 2 + start;
+	unsigned int mid = n / 2 + start;
 
 	std::vector<sf::RectangleShape> left;
 	std::vector<sf::RectangleShape> right;
 
-	for (int i = start; i < mid; i++)
+	for (unsigned int i = start; i < mid; i++)
 		left.push_back(A[i-start]);
 
-	for (int i = mid; i < n+start; i++)
+	for (unsigned int i = mid; i < n+start; i++)
 		right.push_back(A[i-start]);
 
 	mergeSort(left, start, mid - 1);
@@ -1032,7 +1032,7 @@ void App::mergeSort(std::vector<sf::RectangleShape>& A, int start, int end)
  * @param startRight  First index of right vector
  * @param endRight    Final index of right vector
  */
-void App::merge(std::vector<sf::RectangleShape>& A, std::vector<sf::RectangleShape>& left, std::vector<sf::RectangleShape>& right, int startLeft, int endLeft, int startRight, int endRight)
+void App::merge(std::vector<sf::RectangleShape>& A, std::vector<sf::RectangleShape>& left, std::vector<sf::RectangleShape>& right, unsigned int startLeft, unsigned int endLeft, unsigned int startRight, unsigned int endRight)
 {
 	int j = 0;
 	int k = 0;
@@ -1109,7 +1109,7 @@ void App::merge(std::vector<sf::RectangleShape>& A, std::vector<sf::RectangleSha
  * @param startLeft   First index of left vector
  * @param endRight    Final index of right vector
  */
-void App::renderMergeSort(sf::RenderTarget& target, std::vector<sf::RectangleShape>& A, int startLeft, int endRight)
+void App::renderMergeSort(sf::RenderTarget& target, std::vector<sf::RectangleShape>& A, unsigned int startLeft, unsigned int endRight)
 {
 	// Flag to indicate whether this is the final run of merge before the vector is sorted
 	static bool finalRun = false;
@@ -1119,7 +1119,7 @@ void App::renderMergeSort(sf::RenderTarget& target, std::vector<sf::RectangleSha
 		finalRun = true;
 
 	// Update heights of bars for current segment of vector
-	for (int i = startLeft; i < endRight; i++)
+	for (unsigned int i = startLeft; i < endRight; i++)
 	{
 		// Poll events
 		pollEvents();
@@ -1181,14 +1181,14 @@ void App::quickSort(std::vector<sf::RectangleShape>& A, int start, int end)
  * @param start  First index in current partition
  * @param end    Final index in current partition
  */
-int App::partition(std::vector<sf::RectangleShape>& A, int start, int end)
+int App::partition(std::vector<sf::RectangleShape>& A, unsigned int start, unsigned int end)
 {
 	float pivot = A[end].getSize().y;
 	A[end].setFillColor(partitionIndexColor);
 	render();
 	int partitionIndex = start;
 
-	for (int i = start; i < end; i++)
+	for (unsigned int i = start; i < end; i++)
 	{
 		// Poll events
 		pollEvents();
