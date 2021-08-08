@@ -1,4 +1,4 @@
-# SortingVisualizer
+# Sorting Visualizer
 A sorting visualizer application made in C++ using the SFML library.  
 
 This application is capable of visualizing selection sort, bubble sort, insertion sort, merge sort, and quick sort.
